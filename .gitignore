@@ -127,3 +127,14 @@ dmypy.json
 
 # Pyre type checker
 .pyre/
+
+
+# 忽略
+*.exe
+*.zip
+*.exe
+*.pdf
+*.doc
+*.docx
+*.pptx
+*.mhtml
