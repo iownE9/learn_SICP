@@ -138,3 +138,6 @@ dmypy.json
 *.docx
 *.pptx
 *.mhtml
+
+SICP/*
+BearSir/*
