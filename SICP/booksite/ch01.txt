@@ -1,0 +1,42 @@
+Ex1.1
+
+    10
+    12
+    8
+    3
+    6
+    Value: a
+    Value: b
+    19
+    #f
+    4
+    16
+    6
+    16 
+
+
+Ex1.2
+
+ (/ (+ 4 5 (- 2 3) 6 (/ 4 5)) 
+    (* 3 (- 6 2) (- 2 7))) 
+
+Ex1.3
+
+ (define (ssq a b) (+ (* a a) (* b b))) 
+  
+ (define (sumOfLargestTwoSquared x y z) 
+   (cond ((and (<= x y) (<= x z)) (ssq y z)) 
+         ((and (<= y x) (<= y z)) (ssq x z)) 
+         (else (ssq x y)))) 
+
+ (sumOfLargestTwoSquared 1 2 3) 
+ ;Value: 13 
+ (sumOfLargestTwoSquared 1 1 1) 
+ ;Value: 2 
+ (sumOfLargestTwoSquared 1 2 2) 
+ ;Value: 8 
+ (sumOfLargestTwoSquared 1 1 2) 
+ ;Value: 5 
+ (sumOfLargestTwoSquared 1 4 3) 
+ ;Value: 25 
+ 

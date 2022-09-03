@@ -1,0 +1,62 @@
+exercise 1.2
+
+( / 
+    ( + 
+        ( + 
+             5  4
+        )
+        ( - 
+            2 
+            ( - 
+                3 
+                ( + 
+                    6 
+                    ( / 4 5 )    
+                )
+            )
+        )
+    )
+    
+    (
+        * ( * 3 ( - 6 2 )) (- 2 7)
+    )
+)
+
+
+(
+    / (+ 5 4 2 6 (/ 4 5) -3 )
+      (* 3 (- 6 2) (- 2 7))
+)
+
+
+
+
+Image saved on Thursday March 17, 2022 at 6:50:34 PM
+
+  Release 11.2 || SF || LIAR/x86-64
+
+1 ]=> (define A (* 5 5))
+;Value: a
+
+1 ]=> (define (D) (* 5 5))
+;Value: d
+
+1 ]=> A 
+;Value: 25
+
+1 ]=> D
+;Value: #[compound-procedure 12 d]
+
+1 ]=> (D)
+;Value: 25
+
+1 ]=> (A)
+;The object 25 is not applicable.
+;To continue, call RESTART with an option number:
+; (RESTART 2) => Specify a procedure to use in its place.
+; (RESTART 1) => Return to read-eval-print level 1.
+
+2 error> 
+
+
+
