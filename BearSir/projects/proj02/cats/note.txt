@@ -1,0 +1,41 @@
+>>> pawssible_patches("tesng", "testing", big_limit)   # tesng -> testng -> testing
+
+4
+
+
+
+# Error: expected
+
+#     2
+
+# but got
+
+#     4
+-------------
+add:
+
+elif len(start[s:]) > len(goal[g:]):  # remove
+    s += 1
+elif len(start[s:]) < len(goal[g:]):  # add
+    g += 1
+
+============
+
+>>> from cats import pawssible_patches, autocorrect
+
+>>> sum([pawssible_patches('baffy', 'btfi', k) > k for k in range(5)])
+
+4
+
+
+
+# Error: expected
+
+#     3
+
+# but got
+
+#     4
+
+
+Problem 9  10题意理解
