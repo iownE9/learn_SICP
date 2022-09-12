@@ -29,10 +29,38 @@
 | proj02 | Cats（猫猫打字通）                                           | https://www.bilibili.com/video/BV1Dg411f7nj |
 | lec11  | Tree（树）                                                   | https://www.bilibili.com/video/BV1JB4y1Y73A |
 | lab05  | Data Abstraction, Trees（数据抽象，树）                      | https://www.bilibili.com/video/BV1Ae4y197Lh |
-
-
-
-
-
-
+| lec12  | Mutable Values（可修改的值）                                 | https://www.bilibili.com/video/BV1PG4y1i7ps |
+| hw03   | Trees, Data Abstraction（树，数据抽象）                      | https://www.bilibili.com/video/BV11U4y1i7dv |
+| lec13  | Mutable Functions（可修性的函数）                            | https://www.bilibili.com/video/BV1og411Z7wS |
+| lab06  | Nonlocal, Mutability（非本地和修改性）                       | https://www.bilibili.com/video/BV1xB4y187bu |
+| lec14  | Iterators（迭代器）                                          | https://www.bilibili.com/video/BV1rW4y127FT |
+| lec15  | Objects（对象）                                              | https://www.bilibili.com/video/BV1cU4y1v7cw |
+| hw04   | Nonlocal, Iterators（非本地变量，迭代器）                    | https://www.bilibili.com/video/BV1se4y1Q73F |
+| lec16  | Inheritance（继承）                                          | https://www.bilibili.com/video/BV1ZB4y1t7JC |
+| lab07  | Iterators, Generators, OOP（迭代器，生成子和面向对象）       | https://www.bilibili.com/video/BV18W4y1y7TB |
+| proj03 | Ants（蚂蚁塔防）                                             | https://www.bilibili.com/video/BV11g41117zh |
+| lec17  | Representation（表示）                                       | https://www.bilibili.com/video/BV1Dt4y137UN |
+| lec18  | Composition（组合）                                          | https://www.bilibili.com/video/BV1QF411A7py |
+| hw05   | OOP, Linked Lists, Trees（面向对象，链表，树）               | https://www.bilibili.com/video/BV1mt4y137pP |
+| lec19  | Efficiency（效率）                                           | https://www.bilibili.com/video/BV1Vg411y7WQ |
+| lab08  | Linked Lists, Trees（链表，树）                              | https://www.bilibili.com/video/BV1Ag411k7vn |
+| lec20  | Decomposition（解构）                                        | https://www.bilibili.com/video/BV1zv4y1F7vR |
+| lab09  | Midterm Review（阶段性复习）                                 | https://www.bilibili.com/video/BV1nS4y1s7pr |
+| lec21  | Scheme（Scheme语言基础）                                     | https://www.bilibili.com/video/BV1cd4y1P7Th |
+| lab10  | Scheme（Scheme语言基础）                                     | https://www.bilibili.com/video/BV1Fd4y1o7Vt |
+| hw06   | Scheme（Scheme语言基础）                                     | https://www.bilibili.com/video/BV1Aa411Z7Ed |
+| lec22  | Exceptions（异常）                                           | https://www.bilibili.com/video/BV1R14y1b7Cv |
+| lec23  | Calculator（计算器）                                         | https://www.bilibili.com/video/BV1FB4y1z7W3 |
+| hw07   | Scheme Lists（Scheme链表）                                   | https://www.bilibili.com/video/BV1vG4y1a7Mb |
+| lec24  | Interpreters（解释器）                                       | https://www.bilibili.com/video/BV14G411b7sr |
+| lab11  | Interpreters（解释器）                                       | https://www.bilibili.com/video/BV1aB4y1V73q |
+| proj04 | Scheme（Scheme解释器）                                       | https://www.bilibili.com/video/BV1WY4y1F74V |
+| lec25  | Declarative Programming（申述式编程）                        | https://www.bilibili.com/video/BV17P411V71J |
+| hw08   | More Scheme（Scheme 练习）                                   | https://www.bilibili.com/video/BV1nD4y1B7uN |
+| lec26  | Table（表格）                                                | https://www.bilibili.com/video/BV1tP411V75a |
+| lab12  | SQL（SQL基础）                                               | https://www.bilibili.com/video/BV1iW4y1t7om |
+| lec27  | Aggregation（聚合）                                          | https://www.bilibili.com/video/BV1nU4y1r7EG |
+| hw09   | SQL（SQL 基础）                                              | https://www.bilibili.com/video/BV1914y1W7Rk |
+| lab13  | More SQL（SQL练习）                                          | https://www.bilibili.com/video/BV1xe4y1d7Lb |
+| lab14  | Final Review（最终复习）                                     | https://www.bilibili.com/video/BV1Sg411U7cW |
 

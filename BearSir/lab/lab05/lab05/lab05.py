@@ -387,17 +387,19 @@ def build_successors_table(tokens):
     prev = '.'
     for word in tokens:
         if prev not in table:
-            "*** YOUR CODE HERE ***"
-            table[prev] = [word]
-        "*** YOUR CODE HERE ***"
-        if word not in table[prev]:
-            table[prev] += [word]
+            "*** BearSir's CODE HERE ***"
+            table[prev] = []
+        "*** BearSir's CODE HERE ***"
+        table[prev].append(word)
         prev = word
     return table
 
-    # BearSir's code
-    #       table[prev] = []
-    #   table[prev].append(word)
+    # 案例凑巧了 this is error
+    #     "*** YOUR CODE HERE ***"
+    #     table[prev] = [word]
+    # "*** YOUR CODE HERE ***"
+    # if word not in table[prev]:
+    #     table[prev] += [word]
 
 
 def construct_sent(word, table):
