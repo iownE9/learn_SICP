@@ -1,5 +1,6 @@
 from operator import add, sub
 
+
 def a_plus_abs_b(a, b):
     """Return a+abs(b), but without calling abs.
 
@@ -13,7 +14,7 @@ def a_plus_abs_b(a, b):
     ['return f(a, b)']
     """
     if b < 0:
-        f = sub 
+        f = sub
     else:
         f = add
     return f(a, b)
@@ -37,7 +38,7 @@ def two_of_three(x, y, z):
     >>> [type(x).__name__ for x in ast.parse(inspect.getsource(two_of_three)).body[0].body]
     ['Expr', 'Return']
     """
-    return x * x + y * y + z * z -max(x, y, z) * max(x, y, z)
+    return x * x + y * y + z * z - max(x, y, z) * max(x, y, z)
 
 
 def largest_factor(n):
@@ -51,13 +52,26 @@ def largest_factor(n):
     1
     """
     "*** YOUR CODE HERE ***"
-    i = 2
-    while i <= n/2:
-        if(n % i == 0):
-            return max(n // i, i)
-        else:
-            i=i+1
-    return 1
+    # # 1st
+    # i = 2
+    # while i <= n / 2:
+    #     if (n % i == 0):
+    #         return max(n // i, i)
+    #     else:
+    #         i = i + 1
+    # return 1
+
+    # # 2nd
+    # i = 2
+    # while n % i != 0:
+    #     i += 1
+    # return max(i, n // i)
+
+    # BearSir
+    i = n - 1
+    while n % i != 0:
+        i = i - 1
+    return i
 
 
 def if_function(condition, true_result, false_result):
@@ -91,6 +105,7 @@ def with_if_statement():
     else:
         return false_func()
 
+
 def with_if_function():
     """
     >>> result = with_if_function()
@@ -100,18 +115,23 @@ def with_if_function():
     None
     """
     return if_function(cond(), true_func(), false_func())
+    # point
+
 
 def cond():
     "*** YOUR CODE HERE ***"
     return False
 
+
 def true_func():
     "*** YOUR CODE HERE ***"
     print('42')
 
+
 def false_func():
     "*** YOUR CODE HERE ***"
     print('47')
+
 
 def hailstone(n):
     """Print the hailstone sequence starting at n and return its
@@ -129,15 +149,28 @@ def hailstone(n):
     7
     """
     "*** YOUR CODE HERE ***"
-    print(n)
-    i = 1
-    while n != 1 :
+    # mine
+    # print(n)
+    # i = 1
+    # while n != 1:
+    #     i = i + 1
+    #     if n % 2 == 0:
+    #         n = n // 2
+    #         print(n)
+    #     else:
+    #         n = n * 3 + 1
+    #         print(n)
+
+    # return i
+
+    # BearSir
+    i = 0
+    while n != 1:
+        print(n)
         i = i + 1
         if n % 2 == 0:
             n = n // 2
-            print(n)
         else:
-            n = n * 3 + 1
-            print(n)
-
-    return i
+            n = 3 * n + 1
+    print(n)
+    return i + 1
