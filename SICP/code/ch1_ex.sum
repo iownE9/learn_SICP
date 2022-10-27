@@ -1,0 +1,22 @@
+exercise 1.3
+
+( define (min a b c )
+	( and ( <= a b) (<= a c) )
+)
+
+(define (min_get a b c)
+    (cond   ( (min a b c ) a )
+            ( (min b a c ) b )
+            ( (min c b a ) c )   
+    )
+)
+
+(define (ex1_3 a b c )
+    ( - ( + a b c)
+        (min_get a b c)
+    )
+)
+
+
+
+

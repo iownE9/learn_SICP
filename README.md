@@ -1,11 +1,12 @@
 # learn_SICP
 
+## Directory description
 
-| 文件夹 | desc |
-| - | - |
-| BearSir | 南京大学的大佬教程 |
-| CS61A |  | 
-| lib |  | 
-| README.md | 说明 |
+| dir | desc | src |
+| - | - | - |
+| BearSir | 🐻桑 | <https://blog.cuijiacai.com/sicp/> |
+| CS61A | Berkeley | <https://inst.eecs.berkeley.edu/~cs61a/fa20/> |
+| SICP |  | <> |
+| lib | pdf |
 
-BearSir/* 遵守🐻桑的开源协议
+BearSir/* 遵守🐻桑的开源协议,感谢🐻桑🤞
