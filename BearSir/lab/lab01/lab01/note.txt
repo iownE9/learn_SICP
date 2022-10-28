@@ -1,0 +1,37 @@
+# 错题 & point
+
+return 'big'
+>>> 'big'
+
+return "mashed potatoes"
+>>> "mashed potatoes"
+
+print("a")
+>>> a
+
+print('b')
+>>> b
+
+-----
+
+True and 13
+>>> 13
+
+False or 0
+>>> 0
+
+1 and 2 and 3 and 10
+>>> 10
+
+-----
+Print with 'DEBUG:' at the front of the outputted line 
+
+failing test for question sum_digits:
+python3 ok -q sum_digits -i
+
+look at an environment diagram to investigate a failing test for question sum_digits:
+python3 ok -q sum_digits --trace
+
+get a TypeError: ... 'NoneType' object is not ... :
+You forgot a return statement
+
