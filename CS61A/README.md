@@ -10,4 +10,6 @@
 
 ## Resource
 
+**Review exam: <http://albertwu.org/cs61a/review/>**
+
 Python Tutor: <https://pythontutor.com/cp/composingprograms.html#mode=edit>

@@ -1,4 +1,3 @@
-
 def lambda_curry2(func):
     """
     Returns a Curried version of a two-argument function FUNC.
@@ -16,7 +15,6 @@ def lambda_curry2(func):
     """
     "*** YOUR CODE HERE ***"
     return lambda a: lambda b: func(a, b)
-
 
 
 def count_cond(condition):
@@ -47,6 +45,7 @@ def count_cond(condition):
     8
     """
     "*** YOUR CODE HERE ***"
+
     def f(n):
         i, count = 1, 0
         while i <= n:
@@ -54,6 +53,7 @@ def count_cond(condition):
                 count += 1
             i += 1
         return count
+
     return f
 
 
@@ -74,6 +74,7 @@ def compose1(f, g):
     """
     return lambda x: f(g(x))
 
+
 def composite_identity(f, g):
     """
     Return a function with one parameter x that returns True if f(g(x)) is
@@ -89,13 +90,12 @@ def composite_identity(f, g):
     False
     """
     "*** YOUR CODE HERE ***"
+    # 题意
     # Try to use the compose1 function defined below for more HOF practice.
     # return lambda x: f(g(x)) == g(f(x)) # mine
 
     # This is BearSir
-    return lambda x : compose1(f, g)(x) == compose1(g, f)(x)
-
-
+    return lambda x: compose1(f, g)(x) == compose1(g, f)(x)
 
 
 def cycle(f1, f2, f3):
@@ -125,7 +125,9 @@ def cycle(f1, f2, f3):
     19
     """
     "*** YOUR CODE HERE ***"
+
     def my_cycle(n):
+
         def identity(x):
             i = 0
             while i < n:
@@ -138,5 +140,7 @@ def cycle(f1, f2, f3):
                     x = f3(x)
                 i += 1
             return x
+
         return identity
+
     return my_cycle
