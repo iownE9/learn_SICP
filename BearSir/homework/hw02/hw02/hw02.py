@@ -1,9 +1,4 @@
-import re
-
-from urllib3 import Retry
-
-
-HW_SOURCE_FILE=__file__
+HW_SOURCE_FILE = __file__
 
 
 def num_eights(x):
@@ -30,7 +25,7 @@ def num_eights(x):
     "*** YOUR CODE HERE ***"
     if x == 0:
         return 0
-    
+
     if x % 10 == 8:
         return 1 + num_eights(x // 10)
     else:
@@ -40,6 +35,7 @@ def num_eights(x):
     # if x == 0:
     #     return 0
     # return num_eights(x // 10) + (x % 10 == 8)
+
 
 def pingpong(n):
     """Return the nth element of the ping-pong sequence.
@@ -74,16 +70,16 @@ def pingpong(n):
     True
     """
     "*** YOUR CODE HERE ***"
-    def f(k, nth, flag):
-        if k == n:
-            return nth
-        if num_eights(k) > 0 or k % 8 == 0:
-            return f(k+1, nth-flag, -flag)
+
+    def helper(i, v, dir):
+        if i == n:
+            return v
+        if num_eights(i) > 0 or i % 8 == 0:
+            return helper(i + 1, v - dir, -dir)
         else:
-            return f(k+1, nth+flag, flag)
+            return helper(i + 1, v + dir, dir)
 
-    return f(1, 1, 1)
-
+    return helper(1, 1, 1)
 
 
 def missing_digits(n):
@@ -114,13 +110,21 @@ def missing_digits(n):
     True
     """
     "*** YOUR CODE HERE ***"
+
     # Given a number a that is in sorted, increasing order
+    # # mine
+    # if n < 10:
+    #     return 0
+    # sub = n % 10 - (n // 10) % 10
+    # if sub > 1:
+    #     return sub - 1 + missing_digits(n // 10)
+    # return missing_digits(n // 10)
+
+    # BearSir's
     if n < 10:
         return 0
-    sub = n % 10 - (n // 10) % 10
-    if sub > 1:
-        return sub - 1 + missing_digits(n // 10)
-    return missing_digits(n // 10)
+    return missing_digits(n // 10) + max(n % 10 - (n // 10) % 10 - 1, 0)
+
 
 def next_largest_coin(coin):
     """Return the next coin. 
@@ -156,23 +160,25 @@ def count_coins(total):
     True
     """
     "*** YOUR CODE HERE ***"
-    def helper(n, m):
-        # Base Case
-        if n == 0:
-            return 1
-        if n < 0:
-            return 0
-        if m == None:
-            return 0
-        # Recursive Call
-        with_at_least_one_m = helper(n - m,  m)
-        without_m = helper(n, next_largest_coin(m))
-        return with_at_least_one_m + without_m
 
-    return helper(total, 1)
-   
+    # 标记
+    # BearSir's
+    def count_coins_helper(total, smallest_coin):
+        if total < 0 or smallest_coin == None:
+            return 0
+        if total == 0:
+            return 1
+        with_smallest = count_coins_helper(total - smallest_coin,
+                                           smallest_coin)
+        without_smallest = count_coins_helper(total,
+                                              next_largest_coin(smallest_coin))
+        return with_smallest + without_smallest
+
+    return count_coins_helper(total, 1)
+
 
 from operator import sub, mul
+
 
 def make_anonymous_factorial():
     """Return the value of an expression that computes factorial.
@@ -184,15 +190,24 @@ def make_anonymous_factorial():
     >>> check(HW_SOURCE_FILE, 'make_anonymous_factorial', ['Assign', 'AugAssign', 'FunctionDef', 'Recursion'])
     True
     """
-    return lambda n: (lambda fact: 1 if n == 1 else mul(n, fact(sub(n, 1))(fact)))(lambda n: (lambda fact: 1 if n == 1 else mul(n, fact(sub(n, 1))(fact))))
+    # :)
+    return lambda n: (lambda fact: 1 if n == 1 else mul(
+        n,
+        fact(sub(n, 1))(fact)))(lambda n:
+                                (lambda fact: 1
+                                 if n == 1 else mul(n,
+                                                    fact(sub(n, 1))(fact))))
 
-
-    # lambda n: 
-    #         (lambda fact: 
-    #                1 if n == 1 
+    # lambda n:
+    #         (lambda fact:
+    #                1 if n == 1
     #                else mul(n, fact(sub(n, 1))(fact)))
-    # 
-    #    参数fact:  (lambda n: 
-    #                       (lambda fact: 
-    #                           1 if n == 1 
+    #
+    #    参数fact:  (lambda n:
+    #                       (lambda fact:
+    #                           1 if n == 1
     #                           else mul(n, fact(sub(n, 1))(fact))))
+
+    # # BearSir's
+    # return (lambda f: lambda n: f(f, n)
+    #         )(lambda f, n: 1 if n == 1 else mul(n, f(f, sub(n, 1))))
