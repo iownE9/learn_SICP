@@ -1,5 +1,4 @@
 from operator import add, mul
-from xml.sax import xmlreader
 
 square = lambda x: x * x
 
@@ -29,10 +28,18 @@ def unique_digits(n):
     "*** YOUR CODE HERE ***"
     i, k = 0, 0
     while k < 10:
-        if has_digit(n, k) :
+        if has_digit(n, k):
             i += 1
         k += 1
     return i
+
+    # BearSir's better
+    # count = 0
+    # while n > 0:
+    #     if not has_digit(n // 10, n % 10):
+    #         count += 1
+    #     n //= 10
+    # return count
 
 
 def has_digit(n, k):
@@ -44,10 +51,10 @@ def has_digit(n, k):
     """
     "*** YOUR CODE HERE ***"
     # in a positive integer (1..n) 无需考虑 n = 0
-    # if n == k:  
+    # if n == k:
     #     return True
     while n > 0:
-        if n % 10 == k :
+        if n % 10 == k:
             return True
         n = n // 10
     return False
@@ -76,10 +83,11 @@ def ordered_digits(x):
     r = 9
     while x > 0:
         l = x % 10
-        if l > r :
+        if l > r:
             return False
         x, r = x // 10, l
     return True
+
 
 def get_k_run_starter(n, k):
     """
@@ -103,8 +111,8 @@ def get_k_run_starter(n, k):
     i = 0
     final = None
     while i <= k:
-        while (n > 9) and n % 10 > ((n % 100) // 10):
-           n = n // 10 if n > 9 else n
+        while (n > 9) and (n % 10) > ((n % 100) // 10):
+            n = n // 10
         final = n % 10
         i = i + 1
         n = n // 10
@@ -127,25 +135,30 @@ def make_repeater(func, n):
     5
     """
     "*** YOUR CODE HERE ***"
+
     def repeater(x):
         num = n
         while num > 1:
             x = composer(func, func)(x)
             num -= 2
         return func(x) if num == 1 else x
+
     return repeater
 
-    # BearSir perfect
+    # BearSir's perfect
     # f = lambda x: x
     # while n > 0:
     #     f = composer(func, f)
     #     n -= 1
     # return f
 
+
 def composer(func1, func2):
     """Return a function f, such that f(x) = func1(func2(x))."""
+
     def f(x):
         return func1(func2(x))
+
     return f
 
 
@@ -159,6 +172,41 @@ def apply_twice(func):
     """
     "*** YOUR CODE HERE ***"
     return make_repeater(func, 2)
+
+
+# # Q6: Doge
+# wow = 6
+# def much(wow):
+#     if much == wow:
+#         such = lambda wow: 5
+#         def wow():
+#             return such
+#         return wow
+#     such = lambda wow: 4
+#     return wow()
+# wow = much(much(much))(wow)
+# 5
+
+# challenge 1
+# def funny(joke):
+#     hoax = joke + 1
+#     return funny(hoax)
+# def sad(joke):
+#     hoax = joke - 1
+#     return hoax + hoax
+# funny, sad = sad, funny
+# result = funny(sad(1))
+# # 2
+
+# challenge 2
+# def double(x):
+#     return double(x + x)
+# first = double
+# def double(y):
+#     return  y + y
+# result = first(10)
+# 40
+
 
 def protected_secret(password, secret, num_attempts):
     """
@@ -178,10 +226,11 @@ def protected_secret(password, secret, num_attempts):
     >>> my_secret = my_secret("correcthorsebatterystaple")
     SECRET LOCKED
     """
+
     def get_secret(password_attempt):
         "*** YOUR CODE HERE ***"
-     
-        if num_attempts == 0 :
+
+        if num_attempts == 0:
             print('SECRET LOCKED')
             return protected_secret(password, secret, 0)
         elif password_attempt == password:

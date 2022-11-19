@@ -1,8 +1,7 @@
 LAB_SOURCE_FILE = __file__
 
-
-
 this_file = __file__
+
 
 def skip_add(n):
     """ Takes a number n and returns n + n-2 + n-4 + n-6 + ... + 0.
@@ -25,7 +24,6 @@ def skip_add(n):
 
 
 def summation(n, term):
-
     """Return the sum of the first n terms in the sequence defined by term.
     Implement using recursion!
 
@@ -44,9 +42,11 @@ def summation(n, term):
     """
     assert n >= 1
     "*** YOUR CODE HERE ***"
+    # return sum([term(i + 1) for i in range(n)])
+
     if n == 1:
         return term(n)
-    return term(n) + summation(n-1, term)
+    return term(n) + summation(n - 1, term)
 
 
 def paths(m, n):
@@ -65,13 +65,13 @@ def paths(m, n):
     "*** YOUR CODE HERE ***"
     if m == 1 and n == 1:
         return 1
-    
+
     if m == 1:
-        return paths(m, n-1)
+        return paths(m, n - 1)
     if n == 1:
-        return paths(m-1, n)
+        return paths(m - 1, n)
     if m != 1 and n != 1:
-        return paths(m, n-1) + paths(m-1, n)
+        return paths(m, n - 1) + paths(m - 1, n)
 
     # BearSir perfect
     # (m, 1) ==> (1,1) 只有一条
@@ -128,15 +128,14 @@ def max_subseq(n, t):
     "*** YOUR CODE HERE ***"
     if t == 0:
         return 0
-    if n < 10 ** t:
+    if n < 10**t:
         return n
 
-    a = max_subseq(n // 10, t-1) * 10 + n % 10 
+    a = max_subseq(n // 10, t - 1) * 10 + n % 10
     b = max_subseq(n // 10, t)
     return a if a > b else b
-    
-    # tips:  max()
 
+    # tips:  max()
 
 
 def add_chars(w1, w2):
