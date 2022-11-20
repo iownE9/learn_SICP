@@ -1,0 +1,257 @@
+>>> from datetime import date
+>>> tues = date(2014, 5, 13)
+>>> print(date(2014, 5, 19) - tues)
+6 days, 0:00:00
+>>> tues.year
+2014
+>>>
+
+
+>>> tues.strftime('%A, %B %d')
+'Tuesday, May 13'
+>>>
+>>> '1234'.isnumeric()
+True
+>>> 'rOBERT dE nIRO'.swapcase()
+'Robert De Niro'
+>>> 'eyes'.upper().endswith('YES')
+True
+>>>
+
+
+2.4.2   Sequence Objects
+
+>>> chinese = ['coin', 'string', 'myriad']  # A list literal
+>>> suits = chinese                         # Two names refer to the same list
+>>> suits.pop()             # Remove and return the final element
+'myriad'
+>>> suits.remove('string')  # Remove the first element that equals the argument
+>>> suits.append('cup')              # Add an element to the end
+>>> suits.extend(['sword', 'club'])  # Add all elements of a sequence to the end
+>>> suits[2] = 'spade'  # Replace an element
+>>> suits
+['coin', 'cup', 'spade', 'club']
+>>> suits[0:2] = ['heart', 'diamond']  # Replace a slice
+>>> suits
+['heart', 'diamond', 'spade', 'club']
+>>> chinese  # This name co-refers with "suits" to the same changing list
+['heart', 'diamond', 'spade', 'club']
+>>>
+
+>>> nest = list(suits)  # Bind "nest" to a second list with the same elements
+>>> nest[0] = suits     # Create a nested list
+>>> suits.insert(2, 'Joker')  # Insert an element at index 2, shifting the rest
+>>> nest
+[['heart', 'diamond', 'Joker', 'spade', 'club'], 'diamond', 'spade', 'club']
+>>>
+>>> nest[0].pop(2)
+'Joker'
+>>> suits
+['heart', 'diamond', 'spade', 'club']
+>>>
+
+
+>>> suits is nest[0]
+True
+>>> suits is ['heart', 'diamond', 'spade', 'club']
+False
+>>> suits == ['heart', 'diamond', 'spade', 'club']
+True
+>>>
+
+is and ==. The former checks for identity, 
+while the latter checks for the equality of contents.
+
+>>> from unicodedata import lookup
+>>> [lookup('WHITE ' + s.upper() + ' SUIT') for s in suits]
+['♡', '♢', '♤', '♧']
+>>>
+
+
+
+# tuples are immutable.
+>>> 1, 2 + 3
+(1, 5)
+>>> ("the", 1, ("and", "only"))
+('the', 1, ('and', 'only'))
+>>> type( (10, 20) )
+<class 'tuple'>
+>>>
+>>> ()
+()
+>>> (10,)
+(10,)
+>>>
+
+
+>>> code = ("up", "up", "down", "down") + ("left", "right") * 2
+>>> len(code)
+8
+>>> code[3]
+'down'
+>>> code.count("down")
+2
+>>> code.index("left")
+4
+>>>
+
+
+# 2.4.3   Dictionaries
+>>> numerals = {'I': 1.0, 'V': 5, 'X': 10}
+>>> numerals['X']
+10
+>>> numerals['I'] = 1
+>>> numerals['L'] = 50
+>>> numerals
+{'I': 1, 'V': 5, 'X': 10, 'L': 50}
+>>>
+>>> numerals.get('A', 0)
+0
+>>> numerals.get('V', 0)
+5
+>>>
+>>>
+>>> sum(numerals.values())
+66
+>>>
+>>> dict([(3, 9), (4, 16), (5, 25)])
+{3: 9, 4: 16, 5: 25}
+>>>
+
+Dictionaries do have some restrictions:
+    A key of a dictionary cannot be or contain a mutable value.
+    There can be at most one value for a given key.
+
+>>> {x: x*x for x in range(3,6)}
+{3: 9, 4: 16, 5: 25}
+>>>
+
+# ==================== #
+
+# 2.4.4   Local State
+def make_withdraw(balance):
+    """Return a withdraw function that draws down balance with each call.
+    
+    The nonlocal statement indicates that the name appears somewhere 
+    in the environment other than the first (local) frame or the last (global) frame.
+    """
+
+    def withdraw(amount):
+        nonlocal balance  # Declare the name "balance" nonlocal
+        if amount > balance:
+            return 'Insufficient funds'
+        balance = balance - amount  # Re-bind the existing balance name
+        return balance
+
+    return withdraw
+
+
+# within the body of a function, all instances of a name must refer to the same frame.
+
+# This error occurs before line 5 is ever executed, implying that Python has considered line 5 in some way before executing line 3.
+# 1	def make_withdraw(balance):
+# 2	    def withdraw(amount):
+# 3	        if amount > balance: # Error becase 5 line
+# 4	            return 'Insufficient funds'
+# 5	        balance = balance - amount
+# 6	        return balance
+# 7	    return withdraw
+
+
+# 2.4.7   Implementing Lists and Dictionaries
+def mutable_link():
+    """Return a functional implementation of a mutable linked list."""
+    contents = empty
+
+    def dispatch(message, value=None):
+        nonlocal contents
+        if message == 'len':
+            return len_link(contents)
+        elif message == 'getitem':
+            return getitem_link(contents, value)
+        elif message == 'push_first':
+            contents = link(value, contents)
+        elif message == 'pop_first':
+            f = first(contents)
+            contents = rest(contents)
+            return f
+        elif message == 'str':
+            return join_link(contents, ", ")
+
+    return dispatch
+
+
+def to_mutable_link(source):
+    """Return a functional list with the same contents as source."""
+    s = mutable_link()
+    for element in reversed(source):
+        s('push_first', element)
+    return s
+
+
+>>> s = to_mutable_link(suits)
+>>> type(s)
+<class 'function'>
+>>> print(s('str'))
+heart, diamond, spade, club
+
+
+>>> s('pop_first')
+'heart'
+>>> print(s('str'))
+diamond, spade, club
+
+
+def dictionary():
+    """Return a functional implementation of a dictionary."""
+    records = []
+    def getitem(key):
+        matches = [r for r in records if r[0] == key]
+        if len(matches) == 1:
+            key, value = matches[0]
+            return value
+    def setitem(key, value):
+        nonlocal records
+        non_matches = [r for r in records if r[0] != key]
+        records = non_matches + [[key, value]]
+    def dispatch(message, key=None, value=None):
+        if message == 'getitem':
+            return getitem(key)
+        elif message == 'setitem':
+            setitem(key, value)
+    return dispatch
+
+>>> d = dictionary()
+>>> d('setitem', 3, 9)
+>>> d('setitem', 4, 16)
+>>> d('getitem', 3)
+9
+>>> d('getitem', 4)
+16
+
+
+
+
+# 2.4.9   Propagating Constraints
+celsius = connector('Celsius')
+fahrenheit = connector('Fahrenheit')
+
+def converter(c, f):
+    """Connect c to f with constraints to convert from Celsius to Fahrenheit."""
+    u, v, w, x, y = [connector() for _ in range(5)]
+    multiplier(c, w, u)
+    multiplier(v, x, u)
+    adder(v, y, f)
+    constant(w, 9)
+    constant(x, 5)
+    constant(y, 32)
+
+converter(celsius, fahrenheit)
+
+
+>>> celsius['set_val']('user', 25)
+Celsius = 25
+Fahrenheit = 77.0
+
+
+

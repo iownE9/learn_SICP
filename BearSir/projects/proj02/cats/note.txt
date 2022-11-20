@@ -1,41 +1,89 @@
->>> pawssible_patches("tesng", "testing", big_limit)   # tesng -> testng -> testing
+Q10：
+    题意理解
+    
+05:
 
-4
-
-
-
-# Error: expected
-
-#     2
-
-# but got
-
-#     4
--------------
-add:
-
-elif len(start[s:]) > len(goal[g:]):  # remove
-    s += 1
-elif len(start[s:]) < len(goal[g:]):  # add
-    g += 1
-
-============
-
->>> from cats import pawssible_patches, autocorrect
-
->>> sum([pawssible_patches('baffy', 'btfi', k) > k for k in range(5)])
-
-4
+>>> first_diff = lambda w1, w2, limit: 1 if w1[0] != w2[0] else 0
+>>> autocorrect("wrod", ["word", "rod"], first_diff, 1)
+'word'
+>>> autocorrect("inside", ["idea", "inside"], first_diff, 0.5)
+'inside'   # "inside" 在里面 直接返回
+>>> autocorrect("inside", ["idea", "insider"], first_diff, 0.5)
+'idea'     # 0 0
+>>> autocorrect("outside", ["idea", "insider"], first_diff, 0.5)
+'outside'  # 1 1
 
 
+1st 思路错了 就越走越远 白费劲 
+Q7:
+   # assert False, 'Remove this line'
 
-# Error: expected
+    # if ______________: # Fill in the condition
+    #     # BEGIN
+    #     "*** YOUR CODE HERE ***"
+    #     # END
 
-#     3
+    # elif ___________: # Feel free to remove or add additional cases
+    #     # BEGIN
+    #     "*** YOUR CODE HERE ***"
+    #     # END
 
-# but got
+    # else:
+    #     add_diff = ... # Fill in these lines
+    #     remove_diff = ...
+    #     substitute_diff = ...
+    #     # BEGIN
+    #     "*** YOUR CODE HERE ***"
+    #     # END
 
-#     4
+    # # 要的是修改的次数 不是怎么修改
+    # len_start, len_goal = len(start), len(goal)
+    # dif = abs(len_start - len_goal)
+    # if dif > limit:
+    #     return limit + 1
+
+    # s, g, dif2 = 0, 0, 0
+    # while s < len_start - 1 and g < len_goal - 1:
+    #     if dif2 > limit:
+    #         return limit + 1
+
+    #     if start[s] == goal[g]:
+    #         s += 1
+    #         g += 1
+    #     else:
+    #         if start[s] == goal[g + 1]:  # add
+    #             g += 1
+    #         elif start[s + 1] == goal[g]:  # remove
+    #             s += 1
+    #         elif len(start[s:]) > len(goal[g:]):  # remove
+    #             s += 1
+    #         elif len(start[s:]) < len(goal[g:]):  # add
+    #             g += 1
+    #         else:  # substitute
+    #             s += 1
+    #             g += 1
+    #         dif2 += 1
+
+    # if start[s] == goal[g]:
+    #     dif2 = dif2 + abs(len_start - s + len_goal - g) - 2
+    # else:
+    #     dif2 = dif2 + abs(len_start - s + len_goal - g) - 1
+
+    # return dif2 if dif2 <= limit else limit + 1
+
+    ###########
+
+    # 卡死无解
+    # >>> sum([pawssible_patches('baffy', 'btfi', k) > k for k in range(5)])
+    # 4
+
+    # # Error: expected
+    # #     3
+    # # but got
+    # #     4
+
+
+
 
 
 Problem 9  10题意理解

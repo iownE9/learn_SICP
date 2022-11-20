@@ -8,7 +8,7 @@ SICP学习地图: <https://blog.cuijiacai.com/sicp/>
 
 | dir | desc |
 | - | - |
-| lectures | 🐻桑的SICP全套视频 |
+| lectures | 🐻桑的SICP全套视频讲义 |
 | homework | cs61a 2020 fall hw |
 | lab | cs61a 2020 fall lab |
 | projects | cs61a 2020 fall proj |
@@ -21,8 +21,10 @@ Github: <https://github.com/JacyCui>
 
 ## 待解决问题
 
-proj02 PROBLEM 7
-
 hw03 Q11: Multiple References
 
 hw04 Generator的定义
+
+## better
+
+proj02 Q7

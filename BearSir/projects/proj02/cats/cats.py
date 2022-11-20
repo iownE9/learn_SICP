@@ -15,6 +15,7 @@ def choose(paragraphs, select, k):
     the empty string.
     """
     # BEGIN PROBLEM 1
+    # 第 k 个满足select为True的段落,而不是第 k 段是否满足select为True
     "*** YOUR CODE HERE ***"
     for p in paragraphs:
         if select(p):
@@ -44,15 +45,18 @@ def about(topic):
         words = lower(p).split()
 
         for word in words:
-            for t in topic:
-                if word == t:
-                    return True
+            # for t in topic:
+            #     if word == t:
+            #         return True
+
+            # BearSir's
+            if word in topic:
+                return True
 
         return False
 
     return select
     # END PROBLEM 2
-    # BearSir:   if word in topic:
 
 
 def accuracy(typed, reference):
@@ -74,26 +78,32 @@ def accuracy(typed, reference):
     """
     typed_words = split(typed)
     reference_words = split(reference)
+    # BearSir’s
+    # zip() 往短的截取
     # BEGIN PROBLEM 3
+    count = 0
+    for typed_word, reference_word in zip(typed_words, reference_words):
+        if typed_word == reference_word:
+            count += 1
+    return 100 * count / len(typed_words) if typed_words else 0.0
     "*** YOUR CODE HERE ***"
-    typed_len, reference_len = len(typed_words), len(reference_words)
-    length_min = min(typed_len, reference_len)
-    i, n = 0, 0
+    # typed_len, reference_len = len(typed_words), len(reference_words)
+    # length_min = min(typed_len, reference_len)
+    # i, n = 0, 0
 
-    while i < length_min:
-        if typed_words[i] == reference_words[i]:
-            n += 1
-        i += 1
+    # while i < length_min:
+    #     if typed_words[i] == reference_words[i]:
+    #         n += 1
+    #     i += 1
 
-    return n / typed_len * 100 if typed_len != 0 else 0.0
+    # return n / typed_len * 100 if typed_len != 0 else 0.0
     # END PROBLEM 3
 
-    # BearSir
-    # count = 0
-    # for typed_word, reference_word in zip(typed_words, reference_words):
-    #     if typed_word == reference_word:
-    #         count += 1
-    # return 100 * count / len(typed_words) if typed_words else 0.0
+
+# >>> accuracy(" a b \tc" , "a b c") # Tabs don't count as words
+# ? 66.7
+# -- Not quite. Try again! --
+# ? 100.0
 
 
 def wpm(typed, elapsed):
@@ -112,27 +122,32 @@ def autocorrect(user_word, valid_words, diff_function, limit):
     """
     # BEGIN PROBLEM 5
     "*** YOUR CODE HERE ***"
-    if user_word in valid_words:
-        return user_word
-
-    lowest, res = len(user_word), ""
-    for word in valid_words:
-        diff = diff_function(word, user_word, limit)
-        if diff < lowest:
-            lowest, res = diff, word
-    if lowest <= limit:  #  greater than limit 等于的情况也是要返回的
-        return res
-
-    return user_word
-    # END PROBLEM 5
-
-    # BearSir  跟我hw02最后一题的思路所见略同 但对我来说可读性
     # if user_word in valid_words:
     #     return user_word
-    # cloest_word = min(valid_words, key = lambda valid_word: diff_function(user_word, valid_word, limit))
-    # if diff_function(user_word, cloest_word, limit) > limit:
-    #     return user_word
-    # return cloest_word
+
+    # # lowest 初始值设置有问题
+    # lowest, res = len(user_word), ""
+    # for word in valid_words:
+    #     # diff = diff_function(word, user_word, limit) # Error 顺序
+    #     diff = diff_function(user_word, word, limit)
+    #     if diff < lowest:
+    #         lowest, res = diff, word
+    # if lowest <= limit:  #  greater than limit 等于的情况也是要返回的
+    #     return res
+
+    # return user_word
+    # END PROBLEM 5
+
+    # BearSir's
+    # min() 返回 第一个 条件最小值
+    if user_word in valid_words:
+        return user_word
+    cloest_word = min(
+        valid_words,
+        key=lambda valid_word: diff_function(user_word, valid_word, limit))
+    if diff_function(user_word, cloest_word, limit) > limit:
+        return user_word
+    return cloest_word
 
 
 def shifty_shifts(start, goal, limit):
@@ -158,7 +173,6 @@ def shifty_shifts(start, goal, limit):
 
         if start[i] != goal[i]:
             return recursion(i + 1, n + 1)
-
         return recursion(i + 1, n)
 
     return dif + recursion(0, 0)
@@ -172,90 +186,32 @@ def shifty_shifts(start, goal, limit):
 def pawssible_patches(start, goal, limit):
     """A diff function that computes the edit distance from START to GOAL."""
     # assert False, 'Remove this line'
-
-    # if ______________: # Fill in the condition
-    #     # BEGIN
-    #     "*** YOUR CODE HERE ***"
-    #     # END
-
-    # elif ___________: # Feel free to remove or add additional cases
-    #     # BEGIN
-    #     "*** YOUR CODE HERE ***"
-    #     # END
-
-    # else:
-    #     add_diff = ... # Fill in these lines
-    #     remove_diff = ...
-    #     substitute_diff = ...
-    #     # BEGIN
-    #     "*** YOUR CODE HERE ***"
-    #     # END
-
-    # # 要的是修改的次数 不是怎么修改
-    # len_start, len_goal = len(start), len(goal)
-    # dif = abs(len_start - len_goal)
-    # if dif > limit:
-    #     return limit + 1
-
-    # s, g, dif2 = 0, 0, 0
-    # while s < len_start - 1 and g < len_goal - 1:
-    #     if dif2 > limit:
-    #         return limit + 1
-
-    #     if start[s] == goal[g]:
-    #         s += 1
-    #         g += 1
-    #     else:
-    #         if start[s] == goal[g + 1]:  # add
-    #             g += 1
-    #         elif start[s + 1] == goal[g]:  # remove
-    #             s += 1
-    #         elif len(start[s:]) > len(goal[g:]):  # remove
-    #             s += 1
-    #         elif len(start[s:]) < len(goal[g:]):  # add
-    #             g += 1
-    #         else:  # substitute
-    #             s += 1
-    #             g += 1
-    #         dif2 += 1
-
-    # if start[s] == goal[g]:
-    #     dif2 = dif2 + abs(len_start - s + len_goal - g) - 2
-    # else:
-    #     dif2 = dif2 + abs(len_start - s + len_goal - g) - 1
-
-    # return dif2 if dif2 <= limit else limit + 1
-
-    ###########
-
-    # 卡死无解
-    # >>> sum([pawssible_patches('baffy', 'btfi', k) > k for k in range(5)])
-    # 4
-
-    # # Error: expected
-    # #     3
-    # # but got
-    # #     4
-
-    ###########
-
-    # BEGIN PROBLEM 7  BirSir
-    if limit < 0:
-        return 0
-
-    if not start or not goal:
+    # 2nd 思想就是遍历 求最小
+    if not start or not goal:  # Fill in the condition
+        # BEGIN
+        "*** YOUR CODE HERE ***"
+        # return abs(len(start) - len(goal))
         return len(start) + len(goal)
+        # END
 
-    add_diff = pawssible_patches(start, goal[1:], limit - 1) + 1
-    remove_diff = pawssible_patches(start[1:], goal, limit - 1) + 1
+    elif start[0] == goal[0]:  # Feel free to remove or add additional cases
+        # BEGIN
+        "*** YOUR CODE HERE ***"
+        return pawssible_patches(start[1:], goal[1:], limit)
+        # END
 
-    substitute_diff = pawssible_patches(
-        start[1:], goal[1:],
-        limit) if start[0] == goal[0] else pawssible_patches(
-            start[1:], goal[1:], limit - 1) + 1
-
-    return min(add_diff, remove_diff, substitute_diff)
-    # END PROBLEM 7
+    else:
+        add_diff = pawssible_patches(
+            start, goal[1:], limit -
+            1) if limit > 0 else 2  # Fill in these lines
+        remove_diff = pawssible_patches(start[1:], goal, limit -
+                                        1) if limit > 0 else 2
+        substitute_diff = pawssible_patches(start[1:], goal[1:], limit -
+                                            1) if limit > 0 else 2
+        # BEGIN
+        "*** YOUR CODE HERE ***"
+        return 1 + min(add_diff, remove_diff, substitute_diff)
+        # END
 
 
 def final_diff(start, goal, limit):
@@ -304,15 +260,12 @@ def time_per_word(times_per_player, words):
         words: a list of words, in the order they are typed.
     """
     # BEGIN PROBLEM 9
-    "*** BirSir's CODE HERE ***"
-    times = []
-    for time_stamps in times_per_player:
-        times.append([
-            time_stamps[i + 1] - time_stamps[i]
-            for i in range(len(time_stamps) - 1)
-        ])
-
-    return game(words, times)
+    "*** YOUR CODE HERE ***"
+    for play in times_per_player:
+        for i in range(len(play) - 1):
+            play[i] = play[i + 1] - play[i]
+        play.pop()
+    return game(words, times_per_player)
     # END PROBLEM 9
 
 
@@ -329,7 +282,26 @@ def fastest_words(game):
     word_indices = range(len(
         all_words(game)))  # contains an *index* for each word
     # BEGIN PROBLEM 10
-    "*** BirSir's CODE HERE ***"
+    "*** YOUR CODE HERE ***"
+    # 题意 对于每一个单词 谁打字最快
+    # 2nd
+    # 修补 用上面提示 替换自定义
+    result = [[] for _ in player_indices]
+    word_time = {}
+
+    for word_index in word_indices:
+        word = word_at(game, word_index)
+        for player_num in player_indices:
+            if player_num == 0 or time(game, player_num, word_index) < time(
+                    game, word_time[word], word_index):
+                word_time[word] = player_num
+
+    for k, v in word_time.items():
+        result[v].append(k)
+    return result
+
+    # 使用字典 多此一举
+    # BearSir's better
     words = [[] for _ in player_indices]
     for word_index in word_indices:
         fastest_player = 0
