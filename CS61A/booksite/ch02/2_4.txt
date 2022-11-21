@@ -4,7 +4,9 @@
 6 days, 0:00:00
 >>> tues.year
 2014
->>>
+>>> str(tues - today)
+'81 days, 0:00:00'
+>>> 
 
 
 >>> tues.strftime('%A, %B %d')
@@ -16,8 +18,39 @@ True
 'Robert De Niro'
 >>> 'eyes'.upper().endswith('YES')
 True
+
+upper() lower()
+
+# lect15 start
+>>> a = 'A'
+>>> ord(a)
+65
+>>> hex(ord(a))
+'0x41'
 >>>
 
+
+>>> from unicodedata import name, lookup
+>>> name('A')
+'LATIN CAPITAL LETTER A'
+>>> name('a')
+'LATIN SMALL LETTER A'
+>>>
+>>> lookup('WHITE SMILING FACE')
+'☺'
+>>> lookup('SNOWMAN')
+'☃'
+>>> lookup('SOCCER BALL')
+'⚽'
+>>> lookup('BABY')
+'👶'
+>>> lookup('BABY').encode()
+b'\xf0\x9f\x91\xb6'
+>>> 'A'.encode()
+b'A'
+>>>
+
+# lect15 end
 
 2.4.2   Sequence Objects
 

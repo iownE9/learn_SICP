@@ -1,0 +1,82 @@
+Q6: Sprout leaves
+
+# 1st
+sprout_tree = []
+for leave in leaves:
+    sprout_tree += [tree(leave)]
+
+def sprout(t, sprout_tree):
+    if is_leaf(t):
+        t = tree(label(t), sprout_tree)
+        return t
+
+    for b in branches(t):
+        t = tree(label(t), [sprout(b, sprout_tree)])
+    return t
+return sprout(t, sprout_tree)
+
+Error: expected
+    1
+        2
+        4
+        5
+        3
+        4
+        5
+but got
+    1
+        3
+        4
+        5
+
+
+# 2nd 按原来思路改bug
+sprout_tree = []
+    for leaf in leaves:
+        sprout_tree.append(tree(leaf))
+
+    def sprout(t, sprout_tree):
+        if is_leaf(t):
+            t = tree(label(t), sprout_tree)
+            return t
+
+        tr = []
+        for b in branches(t):
+            tr.append(sprout(b, sprout_tree))
+        return tree(label(t), tr)
+
+    return sprout(t, sprout_tree)
+
+
+# 总结：以前对python 语法掌握不够，使用不够灵活；对递归思想了解肤浅
+
+
+
+Fun Question!
+Shakespeare and Dictionaries
+
+
+steve@D /a/l/B/l/l/lab05 (main)> python3 -i lab05.py
+>>> def sent():
+...     return construct_sent('The', table)
+... 
+>>> sent()
+"The music the moon , here's my lord , By the hand ; from the very well Be bloody spoil of the Duke of us strange That , and mighty gods themselves with your pains to speak to gird at once her."
+>>> sent()
+'The blind.'
+>>> 
+>>> sent()
+'The white hand for In the queen.'
+>>> 
+>>> 
+>>> random_sent()
+'He did end of fortune and so?'
+>>> random_sent()
+'Fair maid.'
+>>> random_sent()
+'They that.'
+>>> random_sent()
+'For that Henry , That thought upon.'
+>>> random_sent()
+"'Twere good advice is between us to conceal it can ; a little alone pursu'd the poor : these saucy priest and me , Prince Troilus anon they but forbear ; his nose , And you are now!"
+>>> exit()

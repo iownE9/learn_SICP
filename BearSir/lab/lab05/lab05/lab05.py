@@ -13,9 +13,10 @@ def couple(s, t):
     assert len(s) == len(t)
     "*** YOUR CODE HERE ***"
     return [[s[i], t[i]] for i in range(len(s))]
+    # BearSir's
+    return [[i, j] for i, j in zip(s, t)]
 
 
-from itertools import zip_longest
 from math import sqrt
 
 
@@ -167,10 +168,14 @@ def berry_finder(t):
     if is_leaf(t):
         return False
 
-    for b in branches(t):
-        if berry_finder(b):
-            return True
-    return False
+    # 2nd
+    return any([berry_finder(b) for b in branches(t)])
+
+    # 1st
+    # for b in branches(t):
+    #     if berry_finder(b):
+    #         return True
+    # return False
 
 
 def sprout_leaves(t, leaves):
@@ -207,36 +212,9 @@ def sprout_leaves(t, leaves):
           2
     """
     "*** YOUR CODE HERE ***"
-    # sprout_tree = []
-    # for leave in leaves:
-    #     sprout_tree += [tree(leave)]
-
-    # def sprout(t, sprout_tree):
-    #     if is_leaf(t):
-    #         t = tree(label(t), sprout_tree)
-    #         return t
-
-    #     for b in branches(t):
-    #         t = tree(label(t), [sprout(b, sprout_tree)])
-    #     return t
-    # return sprout(t, sprout_tree)
-
-    # Error: expected
-    #     1
-    #       2
-    #         4
-    #         5
-    #       3
-    #         4
-    #         5
-    # but got
-    #     1
-    #       3
-    #         4
-    #         5
-    "*** BearSir's CODE HERE ***"
     if is_leaf(t):
-        return tree(label(t), [tree(i) for i in leaves])
+        return tree(label(t), [tree(leaf) for leaf in leaves])
+
     return tree(label(t), [sprout_leaves(b, leaves) for b in branches(t)])
 
 
@@ -352,21 +330,31 @@ def add_trees(t1, t2):
       5
     """
     "*** YOUR CODE HERE ***"
-    if is_leaf(t1):
-        return tree(label(t1) + label(t2), [b for b in branches(t2)])
-    if is_leaf(t2):
-        return tree(label(t1) + label(t2), [b for b in branches(t1)])
+    # 1st
+    # if is_leaf(t1):
+    #     return tree(label(t1) + label(t2), [b for b in branches(t2)])
+    # if is_leaf(t2):
+    #     return tree(label(t1) + label(t2), [b for b in branches(t1)])
+
+    # 2nd
+    if is_leaf(t1) or is_leaf(t2):
+        return tree(
+            label(t1) + label(t2),
+            branches(t1) if branches(t1) else branches(t2))
 
     b1, b2 = branches(t1), branches(t2)
     n = len(b1) - len(b2)
+    add_branches = [tree(0) for _ in range(abs(n))]
     if n < 0:
-        b1 += [tree(0) for _ in range(abs(n))]
+        b1 += add_branches
     else:
-        b2 += [tree(0) for _ in range(abs(n))]
+        b2 += add_branches
 
     return tree(
         label(t1) + label(t2),
         [add_trees(b_1, b_2) for (b_1, b_2) in zip(b1, b2)])
+
+    # BearSir's 多的那部分 后续接上 参考 note.txt-2nd
 
 
 def build_successors_table(tokens):
@@ -387,14 +375,15 @@ def build_successors_table(tokens):
     prev = '.'
     for word in tokens:
         if prev not in table:
-            "*** BearSir's CODE HERE ***"
+            # 2nd
+            "*** YOUR CODE HERE ***"
             table[prev] = []
-        "*** BearSir's CODE HERE ***"
+        "*** YOUR CODE HERE ***"
         table[prev].append(word)
         prev = word
     return table
 
-    # 案例凑巧了 this is error
+    # 1st 
     #     "*** YOUR CODE HERE ***"
     #     table[prev] = [word]
     # "*** YOUR CODE HERE ***"

@@ -8,7 +8,7 @@ SICP学习地图: <https://blog.cuijiacai.com/sicp/>
 
 | dir | desc |
 | - | - |
-| lectures | 🐻桑的SICP全套视频讲义 |
+| lectures | 🐻桑的SICP全套视频讲义,整合进CS61A/Lecture |
 | homework | cs61a 2020 fall hw |
 | lab | cs61a 2020 fall lab |
 | projects | cs61a 2020 fall proj |
