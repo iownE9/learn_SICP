@@ -23,6 +23,8 @@ Github: <https://github.com/JacyCui>
 
 hw03 Q11: Multiple References
 
+(r1*r2)/(r1+r2)  1/(1/r1+1/r2)
+
 hw04 Generator的定义
 
 ## better

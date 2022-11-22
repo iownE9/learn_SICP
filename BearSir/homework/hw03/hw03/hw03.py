@@ -117,33 +117,38 @@ def balanced(m):
     >>> check(HW_SOURCE_FILE, 'balanced', ['Index'])
     True
     """
-    "*** BearSir's CODE HERE ***"
+    "*** YOUR CODE HERE ***"
+    # 2nd 读题不仔细 最开始不知道有 total_weight()
     if is_planet(m):
         return True
 
-    left_end, left_length = end(left(m)), length(left(m))
-    right_end, right_length = end(right(m)), length(right(m))
+    left_arm, right_arm = left(m), right(m)
+    left_end, right_end = end(left_arm), end(right(m))
+    left_weight, right_weight = total_weight(left_end), total_weight(right_end)
 
-    return total_weight(left_end) * left_length == total_weight(
-        right_end) * right_length and balanced(left_end) and balanced(
-            right_end)
+    if length(left_arm) * left_weight != length(right_arm) * right_weight:
+        return False
+
+    return balanced(left_end) and balanced(right_end)  # BearSir
+    return all([balanced(left_end), balanced(right_end)])
 
     # "*** YOUR CODE HERE ***"
-    # if total_weight(end(left(m))) * left(m)[1] != total_weight(end(
-    #         right(m))) * right(m)[1]:
-    #     return False
+    # 1st
+    if total_weight(end(left(m))) * left(m)[1] != total_weight(end(
+            right(m))) * right(m)[1]:
+        return False
 
-    # if is_mobile(end(left(m))):
-    #     if not balanced(end(left(m))):
-    #         return False
-    # if is_mobile(end(right(m))):
-    #     if not balanced(end(right(m))):
-    #         return False
+    if is_mobile(end(left(m))):
+        if not balanced(end(left(m))):
+            return False
+    if is_mobile(end(right(m))):
+        if not balanced(end(right(m))):
+            return False
 
-    # return True
+    return True
 
     # 臂长 打破了抽象壁垒
-    # 迭代判断复杂化 对语法还是不熟悉
+    # 判断复杂化 对语法还是不熟悉
 
 
 def totals_tree(m):
@@ -288,16 +293,15 @@ def has_path(t, word):
     if len(word) == 1:
         return True
 
+    # 2nd
+    return any([has_path(b, word[1:]) for b in branches(t)])
+
+    # 1st
     flag = False
     for b in branches(t):
         flag = flag or has_path(b, word[1:])
 
     return flag
-
-    # BearSir's code
-    # if is_leaf(t) or len(word) == 1:
-    #     return word == label(t)
-    # return label(t) == word[0] and not all([not has_path(b, word[1:]) for b in branches(t)])
 
 
 def interval(a, b):
@@ -345,11 +349,9 @@ def sub_interval(x, y):
     """Return the interval that contains the difference between any value in x
     and any value in y."""
     "*** YOUR CODE HERE ***"
-    p1 = lower_bound(x) - lower_bound(y)
-    p2 = lower_bound(x) - upper_bound(y)
-    p3 = upper_bound(x) - lower_bound(y)
-    p4 = upper_bound(x) - upper_bound(y)
-    return interval(min(p1, p2, p3, p4), max(p1, p2, p3, p4))
+    lower = lower_bound(x) - upper_bound(y)
+    upper = upper_bound(x) - lower_bound(y)
+    return interval(lower, upper)
 
 
 def div_interval(x, y):
@@ -357,8 +359,7 @@ def div_interval(x, y):
     any value in y. Division is implemented as the multiplication of x by the
     reciprocal of y."""
     "*** YOUR CODE HERE ***"
-    assert min(upper_bound(y), lower_bound(y)) > 0 or max(
-        upper_bound(y), lower_bound(y)) < 0
+    assert lower_bound(y) > 0 or upper_bound(y) < 0
 
     reciprocal_y = interval(1 / upper_bound(y), 1 / lower_bound(y))
     return mul_interval(x, reciprocal_y)
@@ -390,7 +391,7 @@ def check_par():
 
 
 def multiple_references_explanation():
-    return """Sorry, we don't know yet"""
+    return """Sorry, I don't know yet"""
 
 
 def quadratic(x, a, b, c):
@@ -412,20 +413,18 @@ def quadratic(x, a, b, c):
         fm = f(mid)
         return interval(min(fl, fm, fr), max(fl, fm, fr))
     return interval(min(fl, fr), max(fl, fr))
+    "*** YOUR CODE HERE ***"
+    d = lower_bound(x)
+    f1 = a * d * d + b * d + c
+    d = upper_bound(x)
+    f2 = a * d * d + b * d + c
 
-    # "*** YOUR CODE HERE ***"
+    d = -b / (2 * a)
+    if d < lower_bound(x) or d > upper_bound(x):
+        return interval(min(f1, f2), max(f1, f2))
 
-    # d = lower_bound(x)
-    # f1 = a * d * d + b * d + c
-    # d = upper_bound(x)
-    # f2 = a * d * d + b * d + c
-
-    # d = -b / (2 * a)
-    # if d < lower_bound(x) or d > upper_bound(x):
-    #     return interval(min(f1, f2), max(f1, f2))
-
-    # f3 = a * d * d + b * d + c
-    # return interval(min(f1, f2, f3), max(f1, f2, f3))
+    f3 = a * d * d + b * d + c
+    return interval(min(f1, f2, f3), max(f1, f2, f3))
 
 
 # Tree ADT
