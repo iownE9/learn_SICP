@@ -330,31 +330,30 @@ def add_trees(t1, t2):
       5
     """
     "*** YOUR CODE HERE ***"
-    # 1st
+    # label_t = label(t1) + label(t2)
+
     # if is_leaf(t1):
-    #     return tree(label(t1) + label(t2), [b for b in branches(t2)])
+    #     return tree(label_t, [b for b in branches(t2)])
     # if is_leaf(t2):
-    #     return tree(label(t1) + label(t2), [b for b in branches(t1)])
+    #     return tree(label_t, [b for b in branches(t1)])
 
-    # 2nd
-    if is_leaf(t1) or is_leaf(t2):
-        return tree(
-            label(t1) + label(t2),
-            branches(t1) if branches(t1) else branches(t2))
+    # b1, b2 = branches(t1), branches(t2)
+    # n = len(b1) - len(b2)
+    # add_branches = [tree(0) for _ in range(abs(n))]
+    # if n < 0:
+    #     b1 += add_branches
+    # else:
+    #     b2 += add_branches
 
-    b1, b2 = branches(t1), branches(t2)
-    n = len(b1) - len(b2)
-    add_branches = [tree(0) for _ in range(abs(n))]
-    if n < 0:
-        b1 += add_branches
-    else:
-        b2 += add_branches
-
-    return tree(
-        label(t1) + label(t2),
-        [add_trees(b_1, b_2) for (b_1, b_2) in zip(b1, b2)])
+    # return tree(label_t, [add_trees(b_1, b_2) for (b_1, b_2) in zip(b1, b2)])
 
     # BearSir's 多的那部分 后续接上 参考 note.txt-2nd
+    # adapt; base case 在zip内包含
+    b1, b2 = branches(t1), branches(t2)
+    n = min(len(b1), len(b2))
+    branch_lst = [add_trees(b_1, b_2)
+                  for b_1, b_2 in zip(b1, b2)] + b1[n:] + b2[n:]
+    return tree(label(t1) + label(t2), branch_lst)
 
 
 def build_successors_table(tokens):
@@ -383,7 +382,7 @@ def build_successors_table(tokens):
         prev = word
     return table
 
-    # 1st 
+    # 1st
     #     "*** YOUR CODE HERE ***"
     #     table[prev] = [word]
     # "*** YOUR CODE HERE ***"
