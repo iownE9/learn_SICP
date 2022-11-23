@@ -1,6 +1,3 @@
-from calendar import firstweekday
-from curses import nonl
-
 this_file = __file__
 
 
@@ -67,12 +64,14 @@ def make_fib():
     return fibonacci
 
     # "*** BearSir's CODE HERE ***"
-    # cur, next = 0, 1
-    # def fib():
-    #     nonlocal cur, next
-    #     pre, cur, next = cur, next, cur + next
-    #     return pre
-    # return fib
+    cur, next = 0, 1
+
+    def fib():
+        nonlocal cur, next
+        pre, cur, next = cur, next, cur + next
+        return pre
+
+    return fib
 
 
 def insert_items(lst, entry, elem):
