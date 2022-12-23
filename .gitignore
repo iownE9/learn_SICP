@@ -140,8 +140,7 @@ dmypy.json
 *.mhtml
 *.png
 BearSir/homework/hw05/*
-
-
+.vscode/*
 
 
 
