@@ -1,0 +1,423 @@
+>>> r = range(10000, 10000000000)
+>>> r[45006230]
+45016230
+>>>
+
+# Iterators
+lazy generation
+
+>>> primes = [2, 3, 5, 7]
+>>> type(primes)
+<class 'list'>
+>>>
+>>> iterator = iter(primes)
+>>> type(iterator)
+<class 'list_iterator'>
+>>>
+>>> next(iterator)
+2
+>>> next(iterator)
+3
+>>> next(iterator)
+5
+>>> next(iterator)
+7
+
+>>> next(iterator)
+Traceback (most recent call last):
+  File "<stdin>", line 1, in <module>
+StopIteration
+>>>
+>>> try:
+...     next(iterator)
+... except StopIteration:
+...     print('No more values')
+...
+No more values
+>>>
+
+
+
+
+>>> r = range(3, 13)
+>>> s = iter(r)  # 1st iterator over r
+>>> next(s)
+3
+>>> next(s)
+4
+>>> t = iter(r)  # 2nd iterator over r
+>>> next(t)
+3
+>>> next(t)
+4
+>>> u = t        # Alternate name for the 2nd iterator
+>>> next(u)
+5
+>>> next(u)
+6
+
+>>> next(s)     # 1st
+5
+>>> next(t)     # 2nd
+7
+
+>>> v = iter(t)  # Another alterante name for the 2nd iterator
+>>> next(v)
+8
+>>> next(u)
+9
+>>> next(t)
+10
+
+
+
+
+# Iterables
+
+>>> d = {'one': 1, 'two': 2, 'three': 3}
+>>> d
+{'one': 1, 'three': 3, 'two': 2}
+>>> k = iter(d)
+>>> next(k)
+'one'
+>>> next(k)
+'three'
+>>> v = iter(d.values())
+>>> next(v)
+1
+>>> next(v)
+3
+
+>>> d.pop('two')
+2
+>>> next(k)
+RuntimeError: dictionary changed size during iteration
+Traceback (most recent call last):
+
+
+
+# 4.2.3   Built-in Iterators
+
+>>> def double_and_print(x):
+        print('***', x, '=>', 2*x, '***')
+        return 2*x
+>>> s = range(3, 7)
+>>> doubled = map(double_and_print, s)  # double_and_print not yet called
+>>> next(doubled)                       # double_and_print called once
+*** 3 => 6 ***
+6
+>>> next(doubled)                       # double_and_print called again
+*** 4 => 8 ***
+8
+>>> list(doubled)                       # double_and_print called twice more
+*** 5 => 10 ***
+*** 6 => 12 ***
+[10, 12]
+
+The filter function returns an iterator over, zip, and reversed functions also return iterators.
+
+
+
+# 4.2.4   For Statements
+
+>>> counts = [1, 2, 3]
+>>> for item in counts:
+        print(item)
+1
+2
+3
+
+
+>>> items = counts.__iter__()
+>>> try:
+        while True:
+            item = items.__next__()
+            print(item)
+    except StopIteration:
+        pass
+1
+2
+3
+
+
+
+
+# 4.2.5   Generators and Yield Statements
+
+>>> def letters_generator():
+        current = 'a'
+        while current <= 'd':
+            yield current
+            current = chr(ord(current)+1)
+>>> for letter in letters_generator():
+        print(letter)
+a
+b
+c
+d
+
+
+>>> letters = letters_generator()
+>>> type(letters)
+<class 'generator'>
+>>> letters.__next__()
+'a'
+>>> letters.__next__()
+'b'
+>>> letters.__next__()
+'c'
+>>> letters.__next__()
+'d'
+>>> letters.__next__()
+Traceback (most recent call last):
+  File "<stdin>", line 1, in <module>
+StopIteration
+
+
+>>> letters = letters_generator()
+>>> type(letters)
+<class 'generator'>
+>>> iter_letters = iter(letters)
+>>> type(iter_letters)
+<class 'generator'>
+>>> next(iter_letters)
+'a'
+>>> next(iter_letters)
+'b'
+>>> next(letters)
+'c'
+>>> next(letters)
+'d'
+>>> next(letters)
+Traceback (most recent call last):
+  File "<stdin>", line 1, in <module>
+StopIteration
+>>> next(iter_letters)
+Traceback (most recent call last):
+  File "<stdin>", line 1, in <module>
+StopIteration
+>>>
+
+
+
+# 4.2.6   Iterable Interface
+
+>>> class Letters:
+        def __init__(self, start='a', end='e'):
+            self.start = start
+            self.end = end
+        def __iter__(self):
+            return LetterIter(self.start, self.end)
+
+
+>>> b_to_k = Letters('b', 'k')
+>>> first_iterator = b_to_k.__iter__()
+>>> next(first_iterator)
+'b'
+>>> next(first_iterator)
+'c'
+>>> second_iterator = iter(b_to_k)
+>>> second_iterator.__next__()
+'b'
+>>> first_iterator.__next__()
+'d'
+>>> first_iterator.__next__()
+'e'
+>>> second_iterator.__next__()
+'c'
+>>> second_iterator.__next__()
+'d'
+
+
+>>> # b_to_k 实例有 __iter__ 方法
+>>> caps = map(lambda x: x.upper(), b_to_k)
+>>> next(caps)
+'B'
+>>> next(caps)
+'C'
+
+
+
+4.2.7   Creating Iterables with Yield
+
+
+>>> def all_pairs(s):
+        for item1 in s:
+            for item2 in s:
+                yield (item1, item2)
+>>> list(all_pairs([1, 2, 3]))
+[(1, 1), (1, 2), (1, 3), (2, 1), (2, 2), (2, 3), (3, 1), (3, 2), (3, 3)]
+
+
+>>> class LettersWithYield:
+        def __init__(self, start='a', end='e'):
+            self.start = start
+            self.end = end
+        def __iter__(self):
+            next_letter = self.start
+            while next_letter < self.end:
+                yield next_letter
+                next_letter = chr(ord(next_letter)+1)
+
+>>> letters = LettersWithYield()
+>>> list(all_pairs(letters))[:5]
+[('a', 'a'), ('a', 'b'), ('a', 'c'), ('a', 'd'), ('b', 'a')]
+
+
+4.2.8   Iterator Interface
+
+>>> class LetterIter:
+        """An iterator over letters of the alphabet in ASCII order."""
+        def __init__(self, start='a', end='e'):
+            self.next_letter = start
+            self.end = end
+        def __next__(self):
+            if self.next_letter == self.end:
+                raise StopIteration
+            letter = self.next_letter
+            self.next_letter = chr(ord(letter)+1)
+            return letter
+
+>>> letter_iter = LetterIter()
+>>> letter_iter.__next__()
+'a'
+>>> letter_iter.__next__()
+'b'
+>>> next(letter_iter)
+'c'
+>>> letter_iter.__next__()
+'d'
+>>> letter_iter.__next__()
+Traceback (most recent call last):
+  File "<stdin>", line 1, in <module>
+  File "<stdin>", line 12, in next
+StopIteration
+
+
+>>> class Positives:
+        def __init__(self):
+            self.next_positive = 1
+        def __next__(self):
+            result = self.next_positive
+            self.next_positive += 1
+            return result
+>>> p = Positives()
+>>> next(p)
+1
+>>> next(p)
+2
+>>> next(p)
+3
+
+
+
+
+
+4.2.10   Python Streams
+
+>>> class Stream:
+        """A lazily computed linked list."""
+        class empty:
+            def __repr__(self):
+                return 'Stream.empty'
+        empty = empty()
+        def __init__(self, first, compute_rest=lambda: empty):
+            assert callable(compute_rest), 'compute_rest must be callable.'
+            self.first = first
+            self._compute_rest = compute_rest
+        @property # 把 rest 方法当作属性调用
+        def rest(self):
+            """Return the rest of the stream, computing it if necessary."""
+            if self._compute_rest is not None:
+                self._rest = self._compute_rest()
+                self._compute_rest = None
+            return self._rest
+        def __repr__(self):
+            return 'Stream({0}, <...>)'.format(repr(self.first))
+
+
+>>> r = Link(1, Link(2+3, Link(9)))
+
+>>> s = Stream(1, lambda: Stream(2+3, lambda: Stream(9)))
+
+>>> r.first
+1
+>>> s.first
+1
+>>> r.rest.first
+5
+>>> s.rest.first
+5
+>>> r.rest
+Link(5, Link(9))
+>>> s.rest
+Stream(5, <...>)
+
+
+>>> def integer_stream(first):
+        def compute_rest():
+            return integer_stream(first+1)
+        return Stream(first, compute_rest)
+>>> positives = integer_stream(1)
+>>> positives
+Stream(1, <...>)
+>>> positives.first
+1
+
+>>> positives.first
+1
+>>> positives.rest.first
+2
+>>> positives.rest.rest
+Stream(3, <...>)
+
+
+
+>>> def map_stream(fn, s):
+        if s is Stream.empty:
+            return s
+        def compute_rest():
+            return map_stream(fn, s.rest)
+        return Stream(fn(s.first), compute_rest)
+
+
+>>> def filter_stream(fn, s):
+        if s is Stream.empty:
+            return s
+        def compute_rest():
+            return filter_stream(fn, s.rest)
+        if fn(s.first):
+            return Stream(s.first, compute_rest)
+        else:
+            return compute_rest()
+
+>>> def first_k_as_list(s, k):
+        first_k = []
+        while s is not Stream.empty and k > 0:
+            first_k.append(s.first)
+            s, k = s.rest, k-1
+        return first_k
+
+>>> s = integer_stream(3)
+>>> s
+Stream(3, <...>)
+>>> m = map_stream(lambda x: x*x, s)
+>>> m
+Stream(9, <...>)
+>>> first_k_as_list(m, 5)
+[9, 16, 25, 36, 49]
+
+
+>>> def primes(pos_stream):
+        def not_divible(x):
+            return x % pos_stream.first != 0
+        def compute_rest():
+            return primes(filter_stream(not_divible, pos_stream.rest))
+        return Stream(pos_stream.first, compute_rest)
+
+>>> prime_numbers = primes(integer_stream(2))
+>>> first_k_as_list(prime_numbers, 7)
+[2, 3, 5, 7, 11, 13, 17]
+
+>>> prime_numbers.first
+2

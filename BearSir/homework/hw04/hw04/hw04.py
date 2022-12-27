@@ -1,6 +1,3 @@
-from os import rmdir
-
-
 def make_bank(balance):
     """Returns a bank function with a starting balance. Supports
     withdrawals and deposits.
@@ -119,8 +116,9 @@ def repeated(t, k):
     #     lst.append(next(t))
 
     # return lst[0]
+
+    # appears K times in a row 连续出现 K 次
     "*** BearSir's CODE HERE ***"
-    # for i in t
     temp, count = next(t), 1
     for i in t:
         if i == temp:
@@ -219,17 +217,20 @@ def make_joint(withdraw, old_pass, new_pass):
     if type(tmp) == str:
         return tmp
 
-    lst_pass = [old_pass, new_pass]
+    # lst_pass = [old_pass, new_pass]
 
-    def j(amount, pass_):
-        if pass_ in lst_pass:
-            return withdraw(amount, lst_pass[0])
-        return withdraw(amount, pass_)
+    # def j(amount, pass_):
+    #     if pass_ in lst_pass:
+    #         return withdraw(amount, lst_pass[0])
+    #     return withdraw(amount, pass_)
 
-    return j
+    # return j
     "*** BearSir's CODE HERE ***"
-    # def joint(amount, input):
-    #     return withdraw(amount, old_pass if input == new_pass else input)
+
+    def joint(amount, input):
+        return withdraw(amount, old_pass if input == new_pass else input)
+
+    return joint
 
 
 def remainders_generator(m):
