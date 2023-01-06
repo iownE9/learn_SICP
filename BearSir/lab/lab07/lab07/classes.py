@@ -241,6 +241,8 @@ class ProfessorCard(Card):
         #     player.deck.cards[i].attack += other_card.attack
         #     player.deck.cards[i].defense += other_card.defense
         #     i += 1
+
+        # list 操作的语法不熟悉，导致的走弯路
         "*** BearSir's CODE ***"
         for card in player.deck.cards:
             card.attack += other_card.attack
