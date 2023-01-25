@@ -95,13 +95,15 @@ def filter_link(f, s):
         return filtered_rest
 
 
-map_link(square, filter_link(odd, range_link(1, 6)))  # Link(1, Link(9, Link(25)))
-
+map_link(square, filter_link(odd, range_link(1,
+                                             6)))  # Link(1, Link(9, Link(25)))
 
 # Trees
 
+
 class Tree:
     """A tree is a label and a list of branches."""
+
     def __init__(self, label, branches=[]):
         self.label = label
         for branch in branches:
@@ -146,8 +148,8 @@ def fib_tree(n):
     if n == 0 or n == 1:
         return Tree(n)
     else:
-        left = fib_tree(n-2)
-        right = fib_tree(n-1)
+        left = fib_tree(n - 2)
+        right = fib_tree(n - 1)
         fib_n = left.label + right.label
         return Tree(fib_n, [left, right])
 

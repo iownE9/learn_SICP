@@ -140,6 +140,7 @@ dmypy.json
 *.mhtml
 *.png
 .vscode/*
+BearSir/lectures/*
 
 
 

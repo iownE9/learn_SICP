@@ -20,14 +20,18 @@ def fib(n):
         return 1
     return fib(n - 2) + fib(n - 1)
 
+
 def memo(f):
     """ Reconstruct a single argument function into a memoized version."""
     cache = {}
+
     def memoized(n):
         if n not in cache:
             cache[n] = f(n)
         return cache[n]
+
     return memoized
+
 
 def make_memo_fib():
     """ Make a memoized fib function that works efficiently.
@@ -49,14 +53,12 @@ def make_memo_fib():
     9227465
     """
     cache = {0: 0, 1: 1}
+
     def memo_fib(n):
         if n in cache:
             return cache[n]
         res = memo_fib(n - 2) + memo_fib(n - 1)
         cache[n] = res
         return cache[n]
+
     return memo_fib
-
-
-
-

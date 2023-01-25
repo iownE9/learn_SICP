@@ -1,6 +1,5 @@
 """CS 61A presents Ants Vs. SomeBees."""
 
-from pickle import TRUE
 import random
 from ucb import main, interact, trace
 from collections import OrderedDict

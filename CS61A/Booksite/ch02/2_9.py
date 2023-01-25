@@ -1,5 +1,6 @@
 # 2.9   Recursive Objects
 
+
 class Link:
     """A linked list with a first element and the rest.
     >>> s = Link(3, Link(4, Link(5)))
@@ -9,17 +10,21 @@ class Link:
     4
     """
     empty = ()
+
     def __init__(self, first, rest=empty):
         assert rest is Link.empty or isinstance(rest, Link)
         self.first = first
         self.rest = rest
+
     def __getitem__(self, i):
         if i == 0:
             return self.first
         else:
-            return self.rest[i-1]
+            return self.rest[i - 1]
+
     def __len__(self):
         return 1 + len(self.rest)
+
 
 def link_expression(s):
     """Return a string that would evaluate to s.
@@ -33,7 +38,9 @@ def link_expression(s):
         rest = ', ' + link_expression(s.rest)
     return 'Link({0}{1})'.format(s.first, rest)
 
+
 Link.__repr__ = link_expression
+
 
 def test_1():
     """
@@ -50,6 +57,7 @@ def test_1():
     >>> s_first[0][2]
     5
     """
+
 
 def extend_link(s, t):
     """
@@ -68,11 +76,13 @@ def extend_link(s, t):
     else:
         return Link(s.first, extend_link(s.rest, t))
 
+
 Link.__add__ = extend_link
 
 
 def square(n):
-    return n*n
+    return n * n
+
 
 def map_link(f, s):
     """
@@ -84,7 +94,6 @@ def map_link(f, s):
         return s
     else:
         return Link(f(s.first), map_link(f, s.rest))
-
 
 
 def filter_link(f, s):
@@ -104,6 +113,8 @@ def filter_link(f, s):
             return Link(s.first, filtered)
         else:
             return filtered
+
+
 def join_link(s, separator):
     """
     >>> s = Link(3, Link(4, Link(5)))
@@ -119,22 +130,22 @@ def join_link(s, separator):
         return str(s.first) + separator + join_link(s.rest, separator)
 
 
-
 def partitions(n, m):
     """Return a linked list of partitions of n using parts of up to m.
     Each partition is represented as a linked list.
     """
     if n == 0:
-        return Link(Link.empty) # A list containing the empty partition
+        return Link(Link.empty)  # A list containing the empty partition
     elif n < 0 or m == 0:
         return Link.empty
     else:
-        using_m = partitions(n-m, m)
+        using_m = partitions(n - m, m)
         with_m = map_link(lambda s: Link(m, s), using_m)
-        without_m = partitions(n, m-1)
+        without_m = partitions(n, m - 1)
 
         # return with_m + without_m
         return with_m + without_m if with_m is not Link.empty else without_m + with_m
+
 
 # PS C:\Users\iown_home\Desktop> Python3.8 -i 2_9.py
 # >>> print_partitions(6, 4)
@@ -162,7 +173,6 @@ def partitions(n, m):
 # >>>
 
 
-
 def print_partitions(n, m):
     """"
     >>> print_partitions(6, 4)
@@ -184,19 +194,24 @@ def print_partitions(n, m):
 
 # 2.9.2   Tree Class
 
+
 class Tree:
+
     def __init__(self, label, branches=()):
         self.label = label
         for branch in branches:
             assert isinstance(branch, Tree)
         self.branches = branches
+
     def __repr__(self):
         if self.branches:
             return 'Tree({0}, {1})'.format(self.label, repr(self.branches))
         else:
             return 'Tree({0})'.format(repr(self.label))
+
     def is_leaf(self):
         return not self.branches
+
 
 def fib_tree(n):
     """
@@ -208,9 +223,10 @@ def fib_tree(n):
     elif n == 2:
         return Tree(1)
     else:
-        left = fib_tree(n-2)
-        right = fib_tree(n-1)
+        left = fib_tree(n - 2)
+        right = fib_tree(n - 1)
         return Tree(left.label + right.label, (left, right))
+
 
 def sum_labels(t):
     """Sum the labels of a Tree instance, which may be None.
@@ -235,7 +251,9 @@ def test_1():
     """
     pass
 
+
 # 2.9.3   Sets
+
 
 def test_sets():
     """
@@ -257,6 +275,7 @@ def test_sets():
 def empty(s):
     return s is Link.empty
 
+
 def set_contains(s, v):
     """Return True if and only if set s contains v.
 
@@ -273,6 +292,7 @@ def set_contains(s, v):
     else:
         return set_contains(s.rest, v)
 
+
 def adjoin_set(s, v):
     """Return a set containing all elements of s and element v.
     
@@ -286,6 +306,7 @@ def adjoin_set(s, v):
     else:
         return Link(v, s)
 
+
 def intersect_set(set1, set2):
     """Return a set containing all elements common to set1 and set2.
 
@@ -295,6 +316,7 @@ def intersect_set(set1, set2):
     Link(4, Link(1))
     """
     return keep_if_link(set1, lambda v: set_contains(set2, v))
+
 
 def union_set(set1, set2):
     """Return a set containing all elements either in set1 or set2.
@@ -306,8 +328,6 @@ def union_set(set1, set2):
     """
     set1_not_set2 = keep_if_link(set1, lambda v: not set_contains(set2, v))
     return extend_link(set1_not_set2, set2)
-
-
 
 
 # 从小到大
@@ -326,6 +346,7 @@ def set_contains(s, v):
     else:
         return set_contains(s.rest, v)
 
+
 def intersect_set(set1, set2):
     """
     >>> intersect_set(s, s.rest)
@@ -343,7 +364,6 @@ def intersect_set(set1, set2):
             return intersect_set(set1, set2.rest)
 
 
-
 # 平衡树
 def set_contains(s, v):
     if s is None:
@@ -354,6 +374,7 @@ def set_contains(s, v):
         return set_contains(s.right, v)
     elif s.entry > v:
         return set_contains(s.left, v)
+
 
 def adjoin_set(s, v):
     """
@@ -368,4 +389,3 @@ def adjoin_set(s, v):
         return Tree(s.entry, s.left, adjoin_set(s.right, v))
     elif s.entry > v:
         return Tree(s.entry, adjoin_set(s.left, v), s.right)
-
