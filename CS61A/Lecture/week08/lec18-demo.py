@@ -35,14 +35,14 @@ class Link:
         assert rest is Link.empty or isinstance(rest, Link)
         self.first = first
         self.rest = rest
-    
+
     def __repr__(self):
         if self.rest:
             rest_repr = ', ' + repr(self.rest)
         else:
             rest_repr = ''
         return 'Link(' + repr(self.first) + rest_repr + ')'
-    
+
     def __str__(self):
         string = '<'
         while self.rest is not Link.empty:
@@ -55,6 +55,7 @@ class Link:
 
 square, odd = lambda x: x * x, lambda x: x % 2 == 1
 
+
 def range_link(start, end):
     """ Return a Linked List containing consecutive  integers from start to end.
     
@@ -65,6 +66,7 @@ def range_link(start, end):
         return Link.empty
     return Link(start, range_link(start + 1, end))
 
+
 def map_link(f, s):
     """ Return a Linked List that contains f(x) for each x in Linked List s.
     
@@ -74,6 +76,7 @@ def map_link(f, s):
     if s is Link.empty:
         return s
     return Link(f(s.first), map_link(f, s.rest))
+
 
 def filter_link(f, s):
     """ Return a Linked List that contains only elements x of
@@ -86,10 +89,12 @@ def filter_link(f, s):
     """
     if s is Link.empty:
         return s
-    return Link(s.first, filter_link(f, s.rest)) if f(s.first) else filter_link(f, s.rest)
+    return Link(s.first, filter_link(f, s.rest)) if f(
+        s.first) else filter_link(f, s.rest)
 
 
 # Linked List Mutation
+
 
 def add(s, v):
     """ Add v to s, return modified s.
@@ -130,19 +135,20 @@ class Tree:
           0
           1
     """
+
     def __init__(self, label, branches=[]):
         self.label = label
         for branch in branches:
             assert isinstance(branch, Tree)
         self.branches = list(branches)
-    
+
     def __repr__(self):
         if self.branches:
             branch_str = ', ' + repr(self.branches)
         else:
             branch_str = ''
         return 'Tree({0}{1})'.format(repr(self.label), branch_str)
-    
+
     def __str__(self):
         return '\n'.join(self.indented())
 
@@ -158,6 +164,7 @@ class Tree:
 
 
 # Tree Creation
+
 
 def fib_tree(n):
     """ A Fibonacci tree.
@@ -183,6 +190,7 @@ def fib_tree(n):
 
 # Tree Mutation
 
+
 def prune(t, n):
     """ Prune sub-trees whose label value  is n.
     
@@ -203,9 +211,10 @@ def prune(t, n):
     t.branches = [b for b in t.branches if b.label != n]
     for b in t.branches:
         prune(b, n)
-    
+
 
 # Tree Processing
+
 
 def leaves(tree):
     """ Return the list of leaf values of a tree.
@@ -227,4 +236,3 @@ def height(tree):
     if tree.is_leaf():
         return 0
     return 1 + max([height(b) for b in tree.branches])
-

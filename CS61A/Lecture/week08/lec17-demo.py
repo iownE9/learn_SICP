@@ -12,7 +12,6 @@ def _repr(x):
     return s
 
 
-
 def _str(x):
     """ Return the str string of object x
 
@@ -50,15 +49,15 @@ class Bear:
     """
 
     def __init__(self):
-        self.__repr__ = lambda: 'instance bear repr' # instance attribute
-        self.__str__ = lambda:  'instance bear str'
-    
-    def __repr__(self): # class attribute
+        self.__repr__ = lambda: 'instance bear repr'  # instance attribute
+        self.__str__ = lambda: 'instance bear str'
+
+    def __repr__(self):  # class attribute
         return 'Bear()'
-    
+
     def __str__(self):
         return 'a bear'
-    
+
     def __bool__(self):
         return False
 
@@ -69,6 +68,7 @@ class Bear:
 # Ratio numbers
 
 from math import gcd
+
 
 class Ratio:
     """ A mutable ratio.
@@ -88,19 +88,20 @@ class Ratio:
     >>> 1.4 + f
     2.0
     """
+
     def __init__(self, n, d):
         self.numer = n
         self.denom = d
 
     def __repr__(self):
         return 'Ratio({0}, {1})'.format(self.numer, self.denom)
-    
+
     def __str__(self):
         return '{0}/{1}'.format(self.numer, self.denom)
-    
+
     def __float__(self):
         return self.numer / self.denom
-    
+
     def __add__(self, other):
         if isinstance(other, Ratio):
             n = self.numer * other.denom + other.numer * self.denom
@@ -114,9 +115,3 @@ class Ratio:
         return Ratio(n // g, d // g)
 
     __radd__ = __add__
-
-
-
-
-
-

@@ -139,7 +139,6 @@ dmypy.json
 *.pptx
 *.mhtml
 *.png
-BearSir/homework/hw05/*
 .vscode/*
 
 
