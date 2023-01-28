@@ -18,6 +18,7 @@ def fast_overlap(s, t):
     >>> fast_overlap([3, 4, 6, 7, 9, 10], [1, 3, 5, 7, 8])
     2
     """
+    # n方 变成 n  tip: 你追我赶
     count, i, j = 0, 0, 0
     while i < len(s) and j < len(t):
         if s[i] < t[j]:
@@ -27,4 +28,3 @@ def fast_overlap(s, t):
         else:
             count, i, j = count + 1, i + 1, j + 1
     return count
-

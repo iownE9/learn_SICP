@@ -146,6 +146,12 @@ def reverse_other(t):
     lst = [b.label for b in t.branches]
     lst, i = lst[::-1], 0
 
+    # lec23 Q&A 用 zip()
+    for b, label in zip(t.branches, lst):
+        b.label = label
+        for sub in b.branches:
+            reverse_other(sub)
+
     for b in t.branches:
         b.label, i = lst[i], i + 1
 
