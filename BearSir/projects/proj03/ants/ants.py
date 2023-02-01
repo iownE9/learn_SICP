@@ -143,7 +143,7 @@ class Ant(Insect):
                 container_ant.contain_ant(ant_)
                 place.ant = container_ant
             else:
-                assert place.ant is None, 'Two ants in {0}'.format(place)
+                assert False, 'Two ants in {0}'.format(place)
 
             # if self.is_container():
             #     if self.can_contain(place.ant):
@@ -225,26 +225,14 @@ class ThrowerAnt(Ant):
         This method returns None if there is no such Bee (or none in range).
         """
         # BEGIN Problem 3 and 4
-
-        left, right = self.min_range, self.max_range
-
-        # print("DEBUG:", left, right)
-
         place_, i = self.place, 0
-        # print("DEBUG:", type(place_))
-        while not (len(place_.bees) != 0 and left <= i <= right):
-            # print("DEBUG:", place_.bees, i)
-            place_ = place_.entrance
-            i += 1
-            # print("DEBUG:", "====")
-            # print("DEBUG:", place_, i)
-            # print("DEBUG:", type(place_))
+        while not (len(place_.bees) != 0
+                   and self.min_range <= i <= self.max_range):
+            place_, i = place_.entrance, i + 1
+
+            # place 最左边是 蜜蜂老巢 hive
             if place_.is_hive():
                 return None
-            #
-            # DEBUG: [] 9
-            # DEBUG: <class 'ants.Hive'>
-            # 测试用例共九个 之后还迭代 导致 AttributeError: 'NoneType' object has no attribute 'bees'
 
         # only problrm 3
         # place_ = self.place
@@ -252,9 +240,7 @@ class ThrowerAnt(Ant):
         #     place_ = place_.entrance
 
         bee_ = bee_selector(place_.bees)
-        if bee_ in beehive.bees:
-            return None
-        else:
+        if bee_:
             return bee_
         # return bee_selector(self.place.bees)  # REPLACE THIS LINE
         # END Problem 3 and 4
@@ -334,7 +320,7 @@ class FireAnt(Ant):
         # BEGIN Problem 5
         "*** YOUR CODE HERE ***"
         health_ = self.health - amount
-        for bee in self.place.bees[:]:
+        for bee in self.place.bees[:]:  # copy 一份再循环 复制的实例地址
             bee.reduce_health(amount if health_ > 0 else amount + self.damage)
 
         super().reduce_health(amount)
@@ -370,19 +356,12 @@ class HungryAnt(Ant):
     def action(self, gamestate):
         if self.chewing != 0:
             self.chewing -= 1
-        elif len(self.place.bees) > 0:
-            bee_ = self.place.bees
-            bee_[0].reduce_health(bee_[0].health)
-            self.chewing = self.chew_duration
+            return
 
-    #  错误记录  2 bug
-    # def action(self, gamestate):
-    #     bee_ = self.place.bees
-    #     if self.chewing != 0:
-    #         self.chewing -= 1
-    #     elif len(bee_)>0:
-    #         bee_[0].reduce_health(bee_[0].health)
-    #         self.chewing = 3
+        bee_ = bee_selector(self.place.bees)
+        if bee_:
+            bee_.reduce_health(bee_.health)
+            self.chewing = self.chew_duration
 
 
 # END Problem 7
@@ -593,8 +572,7 @@ class Bee(Insect):
         """Return True if this Bee cannot advance to the next Place."""
         # Special handling for NinjaAnt
         # BEGIN Problem Optional 1
-        if self.place.ant and self.place.ant.blocks_path:
-            return self.place.ant is not None
+        return self.place.ant and self.place.ant.blocks_path
         # END Problem Optional 1
 
     def action(self, gamestate):
@@ -606,30 +584,12 @@ class Bee(Insect):
         destination = self.place.exit
         # Extra credit: Special handling for bee direction
         # BEGIN Problem Optional 2
-        "*** YOUR CODE HERE ***"
-        if hasattr(self, 'slow_list') and len(self.slow_list) > 0:
-            # print("DEBUG:", "slow...")
-            if gamestate.time % 2 == 0:
-                for i in range(len(self.slow_list)):
-                    self.slow_list[i] -= 1
-                # print("DEBUG:", "even")
-
-            else:
-                self.slow_list[0] -= 1
-                destination = None
-                # print("DEBUG:", "odd")
-
-            self.slow_list = list(filter(lambda x: x != 0, self.slow_list))
-            # print("DEBUG:", self.slow_list)
-
-        if destination is not None and hasattr(self,
-                                               'scared') and self.scared > 0:
+        "*** BearSir's CODE HERE ***"
+        if hasattr(self, 'is_scared') and self.is_scared:
             if self.place.entrance.is_hive():
                 destination = self.place
             else:
                 destination = self.place.entrance
-            self.scared -= 1
-            print("DEBUG:", "scared", self.scared)
 
         # END Problem Optional 2
         if self.blocked():
@@ -649,10 +609,13 @@ class Bee(Insect):
         """Apply a status lasting LENGTH turns that causes bee to execute
         the previous .action on even-numbered turns."""
         # BEGIN Problem Optional 2
-        "*** YOUR CODE HERE ***"
-        if not hasattr(self, 'slow_list'):
-            self.slow_list = []
-        self.slow_list.append(length)
+        "*** BearSir's CODE HERE ***"
+
+        def status(gamestate, previous_action):
+            if gamestate.time % 2 == 0:
+                previous_action(gamestate)
+
+        self.apply_status(status, self.action, length)
 
         # END Problem Optional 2
 
@@ -661,10 +624,15 @@ class Bee(Insect):
         lasts for LENGTH turns that causes bee to go backwards."""
 
         # BEGIN Problem Optional 2
-        "*** YOUR CODE HERE ***"
-        if not hasattr(self, 'scared'):
-            self.scared = length
+        "*** BearSir's CODE HERE ***"
+        if not hasattr(self, 'is_scared'):
 
+            def status(gamestate, previous_action):
+                self.is_scared = True
+                previous_action(gamestate)
+                self.is_scared = False
+
+            self.apply_status(status, self.action, length)
         # END Problem Optional 2
 
     def apply_status(self, status, previous_action, length):
@@ -672,8 +640,18 @@ class Bee(Insect):
         duraction LENGTH calls, after which it simply calls PREVIOUS_ACTION."""
 
         # BEGIN Problem Optional 2
-        "*** YOUR CODE HERE ***"
+        "*** BearSir's CODE HERE ***"
+        status_count = 1
 
+        def new_action(gamestate):
+            nonlocal status_count
+            if status_count <= length:
+                status(gamestate, previous_action)
+                status_count += 1
+            else:
+                previous_action(gamestate)
+
+        self.action = new_action
         # END Problem Optional 2
 
 
@@ -710,6 +688,7 @@ class NinjaAnt(Ant):
 ############
 
 
+# Optional 2 的失误在于题意理解，还是英语基础差，做题方法都在题干里
 class SlowThrower(ThrowerAnt):
     """ThrowerAnt that causes Slow on Bees."""
 
@@ -752,6 +731,7 @@ class LaserAnt(ThrowerAnt):
     # OVERRIDE CLASS ATTRIBUTES HERE
     # BEGIN Problem Optional 3
     implemented = True  # Change to True to view in the GUI
+    damage = 2
 
     # END Problem Optional 3
 
@@ -761,12 +741,28 @@ class LaserAnt(ThrowerAnt):
 
     def insects_in_front(self, beehive):
         # BEGIN Problem Optional 3
-        return {}
+        dic, dis, place_ = {}, 0, self.place
+
+        while not place_.is_hive():
+            for bee in place_.bees:
+                dic[bee] = dis
+
+            ant_ = place_.ant
+            if ant_ != None and ant_ is not self:
+                dic[ant_] = dis
+                if ant_.is_container() and ant_.contained_ant != None:
+                    dic[ant_.contained_ant] = dis
+
+            dis, place_ = dis + 1, place_.entrance
+        return dic
         # END Problem Optional 3
 
     def calculate_damage(self, distance):
         # BEGIN Problem Optional 3
-        return 0
+        damage = self.damage - self.insects_shot * 0.0625
+        damage = damage - (0.25 * distance)
+
+        return damage if damage > 0 else 0
         # END Problem Optional 3
 
     def action(self, gamestate):
