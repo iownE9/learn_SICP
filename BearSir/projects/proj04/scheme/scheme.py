@@ -36,15 +36,16 @@ def scheme_eval(expr, env, _=None):  # Optional third argument is ignored
         return SPECIAL_FORMS[first](rest, env)  #  special form
 
     else:
-        # # 配合宏 未完待续
-        # operator_function = scheme_eval(first, env)
-        # if isinstance(operator_function, MacroProcedure):
-        #     # return operator_function.apply_macro(rest, env)
-        #     return scheme_eval(operator_function.apply_macro(rest, env), env)
+        # 配合宏 未完待续
+        operator_function = scheme_eval(first, env, True)
+        if isinstance(operator_function, MacroProcedure):
+            # return operator_function.apply_macro(rest, env)
+            return scheme_eval(operator_function.apply_macro(rest, env), env,
+                               True)
 
-        # operand_arguments = rest.map(lambda e: scheme_eval(e, env))
-        # validate_procedure(operator_function)
-        # return scheme_apply(operator_function, operand_arguments, env)
+        operand_arguments = rest.map(lambda e: scheme_eval(e, env))
+        validate_procedure(operator_function)
+        return scheme_apply(operator_function, operand_arguments, env)
 
         # BEGIN PROBLEM 4
 
@@ -107,6 +108,8 @@ def eval_all(expressions, env):
     while expressions is not nil:
         val = scheme_eval(expressions.first, env, True)
         expressions = expressions.rest
+
+    # print("DEBUG:", "eval_all", val)
 
     return val
 
@@ -404,8 +407,12 @@ def do_and_form(expressions, env):
     "*** YOUR CODE HERE ***"
     res = True
     while expressions is not nil:
-        res = scheme_eval(expressions.first, env, True)
-
+        res = scheme_eval(expressions.first, env)
+        # print("DEBUG:", "and", expressions.first, res)
+        if isinstance(res, Thunk):
+            # print("DEBUG:", "02", result.expr)
+            res = scheme_eval(res.expr, res.env, True)  # 进行尾递归优化
+            print("DEBUG:", "and-02", res)
         if is_false_primitive(res):
             return False
 
@@ -432,7 +439,12 @@ def do_or_form(expressions, env):
     "*** YOUR CODE HERE ***"
     res = False
     while expressions is not nil:
-        res = scheme_eval(expressions.first, env, True)
+        res = scheme_eval(expressions.first, env)
+        # # print("DEBUG:", "or", expressions.first, res)
+        if isinstance(res, Thunk):
+            # print("DEBUG:", "02", result.expr)
+            res = scheme_eval(res.expr, res.env, True)  # 进行尾递归优化
+            print("DEBUG:", "or-02", res)
 
         if is_true_primitive(res):
             return res
@@ -513,7 +525,15 @@ def do_define_macro(expressions, env):
     """
     # BEGIN Problem 20
     "*** YOUR CODE HERE ***"
+    # 19 未完成 需注释掉这一行后运行
+    # scheme_eval = optimize_tail_calls(scheme_eval)
+
     target = expressions.first
+
+    if not scheme_listp(target) or expressions.rest is nil or self_evaluating(
+            target.first):
+        raise SchemeError('malformed list: {0}'.format(repl_str(expressions)))
+
     expression = Pair(target.rest, expressions.rest)
     env.define(target.first,
                MacroProcedure(expression.first, expression.rest, env))
@@ -727,9 +747,12 @@ def complete_apply(procedure, args, env):
     """Apply procedure to args in env; ensure the result is not a Thunk."""
     validate_procedure(procedure)
     val = scheme_apply(procedure, args, env)
+
     if isinstance(val, Thunk):
+        # print("DEBUG:", "complete_apply-01", val)
         return scheme_eval(val.expr, val.env, True)  # 进行尾递归优化
     else:
+        # print("DEBUG:", "complete_apply-02", val)
         return val
 
 
@@ -741,6 +764,7 @@ def optimize_tail_calls(original_scheme_eval):
         return a Thunk containing an expression for further evaluation.
         """
         if tail and not scheme_symbolp(expr) and not self_evaluating(expr):
+            # print("DEBUG:", "01", expr)
             return Thunk(expr, env)
 
         result = Thunk(expr, env)
@@ -748,7 +772,7 @@ def optimize_tail_calls(original_scheme_eval):
         # 未完待续
         "*** YOUR CODE HERE ***"
         while isinstance(result, Thunk):
-            # print("DEBUG:", result.expr)
+            # print("DEBUG:", "02", result.expr)
             result = original_scheme_eval(result.expr, result.env)  # 进行尾递归优化
         return result
         # END PROBLEM 19
@@ -759,7 +783,7 @@ def optimize_tail_calls(original_scheme_eval):
 ################################################################
 # Uncomment the following line to apply tail call optimization #
 ################################################################
-# scheme_eval = optimize_tail_calls(scheme_eval)
+scheme_eval = optimize_tail_calls(scheme_eval)
 
 ####################
 # Extra Procedures #
