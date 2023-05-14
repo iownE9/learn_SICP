@@ -8,11 +8,10 @@ from scheme_builtins import *
 from scheme_reader import *
 from ucb import main, trace
 
+
 ##############
 # Eval/Apply #
 ##############
-
-
 def scheme_eval(expr, env, _=None):  # Optional third argument is ignored
     """Evaluate Scheme expression EXPR in environment ENV.
 
@@ -35,40 +34,16 @@ def scheme_eval(expr, env, _=None):  # Optional third argument is ignored
     if scheme_symbolp(first) and first in SPECIAL_FORMS:
         return SPECIAL_FORMS[first](rest, env)  #  special form
 
-    else:
-        # 配合宏 未完待续
-        operator_function = scheme_eval(first, env, True)
-        if isinstance(operator_function, MacroProcedure):
-            # return operator_function.apply_macro(rest, env)
-            return scheme_eval(operator_function.apply_macro(rest, env), env,
-                               True)
-
-        operand_arguments = rest.map(lambda e: scheme_eval(e, env))
-        validate_procedure(operator_function)
-        return scheme_apply(operator_function, operand_arguments, env)
-
-        # BEGIN PROBLEM 4
-
-        # "*** BearSir's CODE HERE 4***"
-        operator_function, operand_arguments = scheme_eval(
-            first, env), rest.map(lambda e: scheme_eval(e, env))
-        validate_procedure(operator_function)
-        return scheme_apply(operator_function, operand_arguments, env)
-
-        # "*** YOUR CODE HERE ***"
-        def fn(sub):
-            if isinstance(sub, Pair):
-                return scheme_eval(sub, env)
-            return sub  # 多此一举 对上述代码 理解不透彻 ;
-            # 误打误撞让下面的 lookup 不多余了
-
-        mapped_eval = expr.map(fn)
-
-        operator = env.lookup(mapped_eval.first)  # 重复
-        validate_procedure(operator)  # 可省略 scheme_apply 内又调用一次
-
-        return scheme_apply(operator, mapped_eval.rest, env)
-        # END PROBLEM 4
+    else:  # 内建函数或自定义函数
+        # BEGIN  4
+        operator = scheme_eval(first, env)
+        # BEGIN Macro
+        if isinstance(operator, MacroProcedure):
+            return scheme_eval(operator.apply_macro(rest, env), env)
+        # END Macro
+        operands = rest.map(lambda e: scheme_eval(e, env))
+        return scheme_apply(operator, operands, env)
+        # END  4
 
 
 def self_evaluating(expr):
@@ -83,6 +58,8 @@ def scheme_apply(procedure, args, env):
     if isinstance(procedure, BuiltinProcedure):
         return procedure.apply(args, env)
     else:
+        # The last body sub-expression in a lambda expression
+        # 确保 eval_all 由 lambda expression 调用
         new_env = procedure.make_call_frame(args, env)
         return eval_all(procedure.body, new_env)
 
@@ -102,25 +79,25 @@ def eval_all(expressions, env):
     >>> eval_all(read_line("((define x 2) x)"), create_global_frame())
     2
     """
+    # replace this with lines of your own code
+    # return scheme_eval(expressions.first, env)
+    # 该行满足 PROBLEM 5, 坑了我 tail-19
+
     # BEGIN PROBLEM 7
-    # return scheme_eval(expressions.first, env)  # replace this with lines of your own code 满足 PROBLEM 5
     val = None
     while expressions is not nil:
-        val = scheme_eval(expressions.first, env, True)
+        # The last body sub-expression in a lambda expression
+        # (sum (- n 1) (+ n total)) 不执行 打包成 Thunk
+        val = scheme_eval(expressions.first, env, expressions.rest is nil)
         expressions = expressions.rest
-
-    # print("DEBUG:", "eval_all", val)
-
+    # 返回最后一个表达式的值
     return val
+    # END PROBLEM 7
 
-
-# END PROBLEM 7
 
 ################
 # Environments #
 ################
-
-
 class Frame(object):
     """An environment frame binds Scheme symbols to Scheme values."""
 
@@ -148,7 +125,7 @@ class Frame(object):
         "*** YOUR CODE HERE ***"
         if symbol in self.bindings:
             return self.bindings[symbol]
-        elif self.parent is not None:
+        elif self.parent is not None:  # 逐级查询
             return self.parent.lookup(symbol)
         # END PROBLEM 2
         raise SchemeError('unknown identifier: {0}'.format(symbol))
@@ -169,6 +146,7 @@ class Frame(object):
         # BEGIN PROBLEM 10
         "*** YOUR CODE HERE ***"
         child_env = Frame(self)
+        # 形参、实参绑定
         while formals is not nil:
             child_env.define(formals.first, vals.first)
             formals, vals = formals.rest, vals.rest
@@ -179,8 +157,6 @@ class Frame(object):
 ##############
 # Procedures #
 ##############
-
-
 class Procedure(object):
     """The supertype of all Scheme procedures."""
 
@@ -218,11 +194,12 @@ class BuiltinProcedure(Procedure):
         while args is not nil:
             python_args.append(args.first)
             args = args.rest
-
+        # env as the last argument
         if self.use_env:
             python_args.append(env)
         # END PROBLEM 3
         try:
+            # 这个语法真牛逼 形式统一了
             return self.fn(*python_args)
         except TypeError as err:
             raise SchemeError(
@@ -249,8 +226,14 @@ class LambdaProcedure(Procedure):
         of values, for a lexically-scoped call evaluated in environment ENV."""
         # BEGIN PROBLEM 11
         "*** YOUR CODE HERE ***"
-        return self.env.make_child_frame(self.formals, args)  # 18 ?
-        return env.make_child_frame(self.formals, args)
+        # 使用调用方的传进来的 env 18
+        # print("DEBUG: ", "env", env)
+        # return env.make_child_frame(self.formals, args)
+
+        # 使用创建实例时的 env
+        # 先求操作数 在调用方的环境求值; 等执行自定义时 args 已经是调用方的环境的实际数据
+        # print("DEBUG: ", "self.env", self.env)
+        return self.env.make_child_frame(self.formals, args)
         # END PROBLEM 11
 
     def __str__(self):
@@ -276,6 +259,7 @@ def add_builtins(frame, funcs_and_names):
     as built-in procedures. Each item in FUNCS_AND_NAMES has the form
     (NAME, PYTHON-FUNCTION, INTERNAL-NAME)."""
     for name, fn, proc_name in funcs_and_names:
+        # BuiltinProcedure env 用默认 False
         frame.define(name, BuiltinProcedure(fn, name=proc_name))
 
 
@@ -307,19 +291,23 @@ def do_define_form(expressions, env):
     >>> scheme_eval(read_line("(f 3)"), env)
     5
     """
-    validate_form(expressions,
-                  2)  # Checks that expressions is a list of length at least 2
+    # Checks that expressions is a list of length at least 2
+    validate_form(expressions, 2)
     target = expressions.first
     if scheme_symbolp(target):
-        validate_form(
-            expressions, 2,
-            2)  # Checks that expressions is a list of length exactly 2
+        # Checks that expressions is a list of length exactly 2
+        validate_form(expressions, 2, 2)
         # BEGIN PROBLEM 5
         "*** YOUR CODE HERE ***"
-        env.define(target, eval_all(expressions.rest, env))
+        # env.define(target, eval_all(expressions.rest, env)) # tail ERROR!
+        # The last body sub-expression in a lambda expression 不满足
+
+        env.define(target, scheme_eval(expressions.rest.first, env))
         return target
         # END PROBLEM 5
     elif isinstance(target, Pair) and scheme_symbolp(target.first):
+        # shorthand form of defining named procedures
+        # (define (f x) (* x 2))
         # BEGIN PROBLEM 9
         "*** YOUR CODE HERE ***"
         env.define(target.first,
@@ -355,6 +343,7 @@ def do_begin_form(expressions, env):
     3
     """
     validate_form(expressions, 1)
+    # The last sub-expression in a tail context and, or, begin, or let
     return eval_all(expressions, env)
 
 
@@ -384,10 +373,11 @@ def do_if_form(expressions, env):
     3
     """
     validate_form(expressions, 2, 3)
+    # Sub-expressions 2 & 3 in a tail context if expression
     if is_true_primitive(scheme_eval(expressions.first, env)):
-        return scheme_eval(expressions.rest.first, env, True)  # 进行尾递归优化
+        return scheme_eval(expressions.rest.first, env, True)
     elif len(expressions) == 3:
-        return scheme_eval(expressions.rest.rest.first, env, True)  # 进行尾递归优化
+        return scheme_eval(expressions.rest.rest.first, env, True)
 
 
 def do_and_form(expressions, env):
@@ -403,19 +393,14 @@ def do_and_form(expressions, env):
     4
     False
     """
-    # BEGIN PROBLEM 12
     "*** YOUR CODE HERE ***"
+    # 遇 False 而止
     res = True
     while expressions is not nil:
-        res = scheme_eval(expressions.first, env)
-        # print("DEBUG:", "and", expressions.first, res)
-        if isinstance(res, Thunk):
-            # print("DEBUG:", "02", result.expr)
-            res = scheme_eval(res.expr, res.env, True)  # 进行尾递归优化
-            print("DEBUG:", "and-02", res)
+        # The last sub-expression in a tail context and, or, begin, or let
+        res = scheme_eval(expressions.first, env, expressions.rest is nil)
         if is_false_primitive(res):
             return False
-
         expressions = expressions.rest
 
     return res
@@ -437,15 +422,11 @@ def do_or_form(expressions, env):
     """
     # BEGIN PROBLEM 12
     "*** YOUR CODE HERE ***"
+    # 遇 True 而止
     res = False
     while expressions is not nil:
-        res = scheme_eval(expressions.first, env)
-        # # print("DEBUG:", "or", expressions.first, res)
-        if isinstance(res, Thunk):
-            # print("DEBUG:", "02", result.expr)
-            res = scheme_eval(res.expr, res.env, True)  # 进行尾递归优化
-            print("DEBUG:", "or-02", res)
-
+        # The last sub-expression in a tail context and, or, begin, or let
+        res = scheme_eval(expressions.first, env, expressions.rest is nil)
         if is_true_primitive(res):
             return res
 
@@ -475,6 +456,7 @@ def do_cond_form(expressions, env):
             "*** YOUR CODE HERE ***"
             if clause.rest is nil:
                 return test
+            # All non-predicate sub-expressions in a tail context cond
             return eval_all(clause.rest, env)
             # END PROBLEM 13
         expressions = expressions.rest
@@ -489,6 +471,7 @@ def do_let_form(expressions, env):
     """
     validate_form(expressions, 2)
     let_env = make_let_frame(expressions.first, env)
+    # The last sub-expression in a tail context and, or, begin, or let
     return eval_all(expressions.rest, let_env)
 
 
@@ -525,9 +508,7 @@ def do_define_macro(expressions, env):
     """
     # BEGIN Problem 20
     "*** YOUR CODE HERE ***"
-    # 19 未完成 需注释掉这一行后运行
-    # scheme_eval = optimize_tail_calls(scheme_eval)
-
+    validate_form(expressions, 2)
     target = expressions.first
 
     if not scheme_listp(target) or expressions.rest is nil or self_evaluating(
@@ -538,7 +519,6 @@ def do_define_macro(expressions, env):
     env.define(target.first,
                MacroProcedure(expression.first, expression.rest, env))
     return target.first
-
     # END Problem 20
 
 
@@ -586,7 +566,6 @@ SPECIAL_FORMS = {
 }
 
 # Utility methods for checking the structure of Scheme programs
-
 
 def validate_form(expr, min, max=float('inf')):
     """Check EXPR is a proper list whose length is at least MIN and no more
@@ -657,10 +636,8 @@ class MuProcedure(Procedure):
 
     # BEGIN PROBLEM 18
     "*** YOUR CODE HERE ***"
-
     def make_call_frame(self, args, env):
         return env.make_child_frame(self.formals, args)
-
     # END PROBLEM 18
 
     def __str__(self):
@@ -680,17 +657,15 @@ def do_mu_form(expressions, env):
     # BEGIN PROBLEM 18
     "*** YOUR CODE HERE ***"
     return MuProcedure(formals, expressions.rest)
-
     # END PROBLEM 18
 
 
 SPECIAL_FORMS['mu'] = do_mu_form
 
+
 ###########
 # Streams #
 ###########
-
-
 class Promise(object):
     """A promise."""
 
@@ -733,8 +708,6 @@ SPECIAL_FORMS['delay'] = do_delay_form
 ##################
 # Tail Recursion #
 ##################
-
-
 class Thunk(object):
     """An expression EXPR to be evaluated in environment ENV."""
 
@@ -749,10 +722,8 @@ def complete_apply(procedure, args, env):
     val = scheme_apply(procedure, args, env)
 
     if isinstance(val, Thunk):
-        # print("DEBUG:", "complete_apply-01", val)
-        return scheme_eval(val.expr, val.env, True)  # 进行尾递归优化
+        return scheme_eval(val.expr, val.env)
     else:
-        # print("DEBUG:", "complete_apply-02", val)
         return val
 
 
@@ -764,16 +735,22 @@ def optimize_tail_calls(original_scheme_eval):
         return a Thunk containing an expression for further evaluation.
         """
         if tail and not scheme_symbolp(expr) and not self_evaluating(expr):
-            # print("DEBUG:", "01", expr)
             return Thunk(expr, env)
 
         result = Thunk(expr, env)
         # BEGIN PROBLEM 19
-        # 未完待续
         "*** YOUR CODE HERE ***"
+        # 递归变迭代
+        # 谨记定义,按定义修改其他函数
+        """
+        A tail call is a call expression in a tail context: 
+        • The last body sub-expression in a lambda expression 
+        • Sub-expressions 2 & 3 in a tail context if expression 
+        • All non-predicate sub-expressions in a tail context cond
+        • The last sub-expression in a tail context and, or, begin, or let
+        """
         while isinstance(result, Thunk):
-            # print("DEBUG:", "02", result.expr)
-            result = original_scheme_eval(result.expr, result.env)  # 进行尾递归优化
+            result = original_scheme_eval(result.expr, result.env)
         return result
         # END PROBLEM 19
 
